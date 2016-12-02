@@ -1,0 +1,289 @@
+<script>
+	var contas = <?php echo json_encode(array_values($contas)); ?>;
+	var categorias = <?php echo json_encode(array_values($categorias)); ?>;
+</script>
+
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-static-top fundoNavBar" role="navigation" style="margin: 0">
+	<div class="navbar-header">
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+			<span class="sr-only">Toggle navigation</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</button>
+	</div>
+	<!-- /.navbar-header -->
+
+	<ul class="nav navbar-top-links fundoNavBar-vertical" style="margin-left:260px">
+		<div class="tipDireita">
+			<span><?php echo $contaNome; ?></span>
+		</div>
+		<div class="exibeInformacoes"><span class="Titulo">Saldo:</span><br/><span class="<?=($saldo>=0 ? "SaldoPos" : "SaldoNeg")?>"><?="$".number_format($saldo, 2, '.', '')?></span></div>
+	</ul>
+</nav>
+
+<div id="page-wrapper">
+
+	<div class="alert alert-warning alert-dismissible" role="alert" style="display:none" id="erro">
+	<button type="button" class="close" id="fechaErro" aria-label="Close"><span aria-hidden="true">&times;</span></button>Esta é uma subtransação de transferência e não pode ser editada diretamente.</div>
+	<div class="tabela">
+		<div class="tabelaLinks">
+			<a id="btAddTransacao" href="#" class=""><i class="fa fa-plus-circle fa-fw"></i>Adicionar transação</a>
+			<div class="dropdown" style="display: inline-block;">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-pencil-square-o fa-fw"></i><span id="btEditar">Editar</span><span class="caret"></span></a>
+				<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+					<li><a href="#">Mesclar</a></li>
+					<li role="separator" class="divider"></li>
+					<li><a href="#" id="btExcluirSel">Excluir</a></li>
+				</ul>
+			</div>
+			<a data-toggle="modal" href="#importaTransacoes" id="btImport"><i class="fa fa-upload fa-fw"></i>Importar</a>
+		</div>
+	<form id="formTransacoes">	
+	<table class="table table-hover table-no-bordered tabela" id="tbTransacoes" 
+		data-toggle="table"
+		data-search="true"
+ 	    data-show-refresh="true"
+	    data-show-columns="true"
+		data-click-to-select="false"
+		data-locale="pt-BR"
+		data-sort-name="date">
+			<thead>
+				<tr><th id="thckAll" data-checkbox="true"></th>
+					<th data-sortable="true" class="col-md-2">Conta</th>
+					<th data-sortable="true" class="col-md-2" data-field="date" data-sort-name="_date_data" data-sorter="monthSorter">Data</th>
+					<th data-sortable="true" class="col-md-4">Sacado</th>
+					<th data-sortable="true" class="col-md-4">Categoria</th>
+					<th data-sortable="true" class="col-md-4">Memo</th>
+					<th data-sortable="true" class="col-md-2">Saída</th>
+					<th data-sortable="true" class="col-md-2">Entrada</th>
+					<th data-sortable="true" class="col-md-2">Saldo</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php 
+					$i = 0;
+					$tID=0;
+					$contaID=0;
+					$tIDs=false;
+					$saldo = array();
+				?>
+				<?php if (count($accounts)): ?>
+					<?php foreach ($accounts as $key => $list): ?>
+						<?php if (($tID != $list['transacao_id']) || ($contaID!=$list['conta_id'])): ?>
+							<tr id="r<?=$i?>" data-index="<?=$i?>" data-tid="<?=$list['transacao_id']?>" data-editavel="<?=$list['editavel']?>" height="40px" >
+								<td data-checkbox="true"></td>
+								<td id="col_conta_nome"><?=$list['conta_nome']?></td>
+								<td id="col_data" data-month="<?=substr($list['data'],-4).substr($list['data'],3,2).substr($list['data'],0,2)?>"><?=$list['data']?></td>
+								<td id="col_sacado_nome"><?=$list['sacado_nome']?></td>
+								<td id="col_categoria"><?php
+										if($list['count_filhas']>1) {
+											echo "<i>(Múltiplas categorias/transferência)...</i>";
+										} else if ($list['conta_para_id']!='') {
+											echo "<i>(Múltiplas categorias/transferência)...</i>";
+										} else if (($list['categoria'])=='') {
+											echo "<span class=\"label label-warning\" style=\"font-size: 12px;\">Classifique este item!</span>";
+										} else {
+											echo $list['categoria'];
+										} ?></td>
+								<td id="col_memo"><?=$list['memo']?></td>
+								<td id="col_saida"><?=($list['valor']<0) ? (-1)*$list['valor'] : 0?></td>
+								<td id="col_entrada"><?=($list['valor']>=0) ? $list['valor'] : 0?></td>
+								<td id="col_saldo"><?php 
+										if(!isset($saldo[$list['conta_nome']]))
+											$saldo[$list['conta_nome']]=0;
+										$saldo[$list['conta_nome']] = $saldo[$list['conta_nome']] + $list['valor'];
+										echo $saldo[$list['conta_nome']];
+									?></td>	
+							</tr>
+						<?php endif; ?>
+						<?php $tID = $list['transacao_id']; $contaID = $list['conta_id'];?>
+					<?php $i++; endforeach; ?>
+				<?php else: ?>
+					
+				<?php endif;?>
+			</tbody>
+		</table>
+		</form>
+		<?php 
+			$i = 0;
+			$tID=0;
+			$contaID=0;
+			$tIDs=false;
+			$saldo = array();
+			//Gerar o select para reuso
+			function geraCategorias($id,$trid,$categorias,$itemSelecionado,$acao) {
+				$sHTML = "<select class=\"categorias\" id=\"" . strval($id) . "\" name=\"" . strval($id) . "\" data-trid=\"" . strval($trid) . "\">";
+				$sHTML .="<option></option>";
+				$grupo = "";
+				foreach ($categorias as $key => $item) {
+					if ($grupo != $item['categoria_grupo']) {
+						if ($grupo !="") {
+							$sHTML .= "</optgroup>";
+						}
+						$grupo = $item['categoria_grupo'];
+						$sHTML .= "<optgroup label=\"" . $grupo . "\">"; 
+					}
+					$sHTML .= "<option value=\"" . $item['id'] . "\"";
+					if ($item['id']==$itemSelecionado) {
+						$sHTML .= "selected=\"selected\"";
+					}
+					$sHTML .= ">" . $item['categoria'] . "</option>";
+				}			
+				$sHTML .= "</optgroup>";
+				if ($acao) {
+					$sHTML .= "<optgroup label=\"Ação:\"><option value=\"multiplos\"";
+					if ($itemSelecionado=="multiplos") {
+						$sHTML .= "selected=\"selected\"";
+					}
+					$sHTML .= ">Múltiplas categorias/transferir</optgroup>";
+				}
+				$sHTML .= "</select>";
+				return $sHTML;
+			}
+		?>
+		<div style="display: none;">
+			<table>
+			<?php $i=0; $ultLinha=0; $intTr=0; if (count($accounts)): ?>
+				<?php foreach ($accounts as $key => $list): ?>
+					<?php if ((($tID != $list['transacao_id']) || ($contaID!=$list['conta_id'])) && $tID!=0): ?>
+						<tr class="editaTransacao selected">
+							<td></td><td><input name="contaID" type="text" id="contaID" value="<?=$contaID?>" style="display:none">
+							</td><td><input type="text" name="transacaoID" id="transacaoID" value="<?=$tID?>" style="display:none"></td>
+							<td>
+								<button type="button" class="btn btn-info btn-sm" aria-label="Adicionar Subtransação"  id="btAddSub">
+								  <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Subtransação/Transferência
+								</button>
+							</td>							
+							<td style="text-align: right">Faltando distribuir:</td><td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr class="editaTransacao">
+							<td></td><td><input name="countTr" id="countTr" value="<?=$intTr?>"  style="display:none"></td>
+							<td></td><td></td><td></td>
+							<td></td>
+							<td>
+								<button type="submit" class="btn btn-success btn-sm" aria-label="Salvar" id="btSalvar">
+								  <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Salvar
+								</button>
+							</td>
+							<td>
+								<button type="button" class="btn btn-danger btn-sm" aria-label="Cancelar" id="btCancelar">
+								  <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span> Cancelar
+								</button>
+							</td>
+							<td></td>
+						</tr>
+						 
+						</tbody>
+					<?php $intTr=0; endif;?>
+					<?php if ((($tID != $list['transacao_id']) || ($contaID!=$list['conta_id']))): ?>
+					<tbody id="edita_r<?=$i?>">
+					
+					<?php endif; ?>
+						<?php if ((($tID != $list['transacao_id']) || ($contaID!=$list['conta_id'])))  {
+							$ultLinha=$i;
+						}?>
+						<?php if ((($tID != $list['transacao_id']) || ($contaID!=$list['conta_id']))): ?>
+							<tr class="editaTransacao selected" id="main<?=$intTr+1?>" data-parent="<?=$ultLinha?>">
+								<td><input name="tritem_id" value="<?=$list['tritem_id']?>" style="display:none"></td>
+								<td><div id="conta_nome" class="input-group-btn"><input type="text" placeholder="Conta" id="conta" data-formValue="<?=$list['conta_id']?>" value="<?=$list['conta_nome']?>" class="form-control form-inline transacao input-sm typeahead conta"/></div></td>
+								<td><input name="dataTr" type="text" data-provide="datepicker" placeholder="Data" id="dataTr" value="<?=$list['data']?>" class="form-control form-inline transacao input-sm"></td>
+								<td><input type="text" placeholder="Sacado" data-trid="<?=$list['tritem_id']?>" id="sacado" name="sacado" value="<?=$list['sacado_nome']?>" class="form-control form-inline transacao input-sm"/></td>
+								<td><?=($list['count_filhas']<=1) ? geraCategorias("categoria",$list['tritem_id'],$categorias,$list['catitem_id'],true) : geraCategorias("categoria",$list['tritem_id'],$categorias,"multiplos",true)?></td>
+								<td><input type="text" placeholder="Memo"  data-trid="<?=$list['tritem_id']?>" id="memo" name="memo" value="<?=$list['memo']?>" class="form-control form-inline transacao input-sm"/></td>
+								<td><input type="text" name="totalSaida" placeholder="Saída" id="totalSaida" value="<?=($list['valor']<0) ? (-1)*$list['valor'] : "0"?>" class="form-control form-inline transacao input-sm"/></td>
+								<td><input type="text" name="totalEntrada" placeholder="Entrada" id="totalEntrada" value="<?=($list['valor']>=0) ? $list['valor'] : "0"?>" class="form-control form-inline transacao input-sm"/></td>
+								<td><input type="text" name="split" id="split" value="<?=($list['count_filhas']>1 || $list['conta_para_id']!='') ? "true" : "false" ?>" style="display:none"></td>
+							</tr>
+						<?php endif; ?>
+						<?php if ($list['count_filhas']>1 || $list['conta_para_id']!=''):?>
+						<tr class="editaTransacao selected" id="sub<?=$intTr+1?>" data-parent="<?=$ultLinha?>">
+							<td><input type="text" name="transferir_para_id_<?=$intTr?>" id="transferir_para_id_<?=$intTr?>" value="<?=$list['conta_para_id']?>" style="display:none"></td>
+							<td><input name="tritem_id_<?=$intTr?>" value="<?=$list['tritem_id']?>" style="display:none"></td>
+							<td align="right"><a href="#"><span style="font-size: 22px; padding-top:4px;" class="glyphicon glyphicon-remove-circle" aria-hidden="true" id="remSubt" data-id="<?=$intTr?>"></span></a></td>
+							<td><div id="conta_nome" class="input-group-btn"><input type="text" placeholder="Transferir para:" data-trid="<?=$list['tritem_id']?>" id="transferir_<?=$intTr?>" name="transferir_<?=$intTr?>" data-intTr="<?=$intTr?>" value="<?=$list['conta_para_nome']?>" class="form-control form-inline transacao input-sm typeahead transferir_para"/></div></td>
+							<td><?=geraCategorias("categoria_".$intTr,$list['tritem_id'],$categorias,$list['catitem_id'],false)?></td>
+							<td><input type="text" placeholder="Memo"  data-trid="<?=$list['tritem_id']?>" id="memo_<?=$intTr?>" name="memo_<?=$intTr?>" value="<?=$list['memo']?>" class="form-control form-inline transacao input-sm" disabled/></td>
+							<td><input type="text" placeholder="Saída" data-trid="<?=$list['tritem_id']?>"  id="saida_<?=$intTr?>" name="saida_<?=$intTr?>" value="<?=($list['valor_item']<0) ? (-1)*$list['valor_item'] : ''?>" class="form-control form-inline transacao input-sm"/></td>
+							<td><input type="text" placeholder="Entrada" data-trid="<?=$list['tritem_id']?>"  id="entrada_<?=$intTr?>" name="entrada_<?=$intTr?>" value="<?=($list['valor_item']>=0) ? $list['valor_item'] : ''?>" class="form-control form-inline transacao input-sm"/></td>
+							<td></td>
+						</tr>
+						<?php endif;?>
+				<?php $tID = $list['transacao_id']; $contaID = $list['conta_id'];?>
+				<?php $i++; $intTr++; endforeach; ?>
+				
+				<?php if (count($accounts)): ?>			
+						<tr class="editaTransacao selected">
+							<td></td><td><input name="contaID" type="text" id="contaID" value="<?=$contaID?>" style="display:none">
+							</td><td><input type="text" name="transacaoID" id="transacaoID" value="<?=$tID?>" style="display:none"></td>
+							<td>
+								<button type="button" class="btn btn-info btn-sm" aria-label="Adicionar Transacao"  id="btAddSub">
+								  <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Subtransação/Transferência
+								</button>
+							</td>							
+							<td style="text-align: right">Faltando distribuir:</td><td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr class="editaTransacao">
+							<td></td><td><input name="countTr" id="countTr" value="<?=$intTr?>"  style="display:none"></td><td></td><td></td><td></td>
+							<td></td>
+							<td>
+								<button type="submit" class="btn btn-success btn-sm" aria-label="Salvar" id="btSalvar">
+								  <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Salvar
+								</button>
+							</td>
+							<td>
+								<button type="button" class="btn btn-danger btn-sm" aria-label="Cancelar" id="btCancelar">
+								  <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span> Cancelar
+								</button>
+							</td>
+							<td></td>
+						</tr>
+						 
+						</tbody>
+				
+				<?php endif;?>
+			<?php endif;?>
+			</table>
+			<div style="display:none">
+				<?=geraCategorias("categoria_".$intTr,$list['tritem_id'],$categorias,$list['catitem_id'],false)?>
+			</div>
+		</div>
+		<!-- Modal -->
+			<div id="importaTransacoes" class="modal fade">
+			  <div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title">Importar Arquivo OFX</h4>
+					</div>
+					<form action="<?=base_url('importaOFX')?>" method="post" enctype="multipart/form-data">
+						<div id="OFX_Inicio" class="modal-body">
+							<p>Selecione um arquivo OFX compátivel para importar transações:</p>
+							<div style="display:none">
+								<input type="file" name="files[]" id="filer_input" accept=".ofx">							
+							</div>
+							<button type="button" class="btn btn-info" id="btFile">
+								<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> Escolher arquivo...
+							</button>
+						</div>
+						<div id="OFX_Resultado" class="modal-body">
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+							<button type="submit" type="button" class="btn btn-primary" id="btImportarFinal" disabled>Importar</button>
+						</div>
+					</form>
+				</div>
+			</div>	
+	</div>	
+</div>
+</div>
+
+<!-- /#page-wrapper -->

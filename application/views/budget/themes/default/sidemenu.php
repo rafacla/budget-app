@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+
+        <meta charset="iso-8859-1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>MIMV</title>
+
+        <!-- Bootstrap Core CSS -->
+        <link href="<?= base_url() ?>assets/admin/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- MetisMenu CSS -->
+        <link href="<?= base_url() ?>assets/admin/css/metisMenu.min.css" rel="stylesheet">
+
+        <!-- Custom CSS -->
+        <link href="<?= base_url() ?>assets/admin/css/sb-admin-2.css" rel="stylesheet">
+
+		<!-- CSS do APP -->
+        <link href="<?= base_url() ?>assets/budget/css/app-budget.css" rel="stylesheet">
+		
+        <!-- Custom Fonts -->
+        <link href="<?= base_url() ?>assets/admin/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+		<link href="<?= base_url() ?>assets/budget/css/select2.min.css" rel="stylesheet">
+
+		<!-- Bootstrap Tables -->
+		<link href="<?= base_url() ?>assets/budget/css/bootstrap-table.min.css" rel="stylesheet">
+		
+		<!-- Bootstrap Date-->
+		<link href="<?= base_url() ?>assets/budget/css/bootstrap-datepicker.css" rel="stylesheet">
+		
+		<!-- jquery-filer -->
+		<link href="<?= base_url() ?>assets/budget/css/jquery.filer.css" rel="stylesheet">
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+	</head>
+
+    <body>
+        <div id="wrapper">
+		    <!-- Navigation -->
+                <div class="navbar-default sidebar" role="navigation">
+                    <div class="sidebar-nav navbar-collapse">
+                        <ul class="nav" id="side-menu">
+							<div class="dropdown meuBudget" style="padding: 3px 20px; margin-left:0px; z-index:3000;">
+								<a class="dropdown-toggle" data-toggle="dropdown">
+									<h4><?=$this->profile->nome?> <i class="fa fa-caret-down"></i></h4>
+								</a>
+								<ul class="dropdown-menu">
+									<li class="semBorda"><a href="<?= base_url('profiles') ?>"><i class="fa fa-exchange fa-fw"></i>Trocar Livro</a></li>
+									<li class="semBorda"><a href="<?= base_url('profiles/novo/'.$this->profile->uniqueid) ?>"><i class="fa fa-leaf fa-fw"></i>Novo começo</a></li>
+									<li role="separator" class="divider"></li>
+									<li class="semBorda"><a href="#"><i class="fa fa-cog fa-fw"></i>Preferências</a></li>
+								</ul>
+							</div>
+							
+							<li><a href="<?= base_url($this->profile->uniqueid.'/accounts') ?>"><i class="fa fa-university fa-fw"></i> Todas contas</a></li>
+                            <li><a href="<?= base_url($this->profile->uniqueid.'/budget') ?>"><i class="fa fa-pie-chart fa-fw"></i> Orçamento</a></li>
+							<hr>
+							<?php $this->load->view($this->config->item('ci_budget_template_dir_admin') . 'sidemenu_exibeContas'); ?>
+                            <hr>
+							<?php if ($this->is_admin): ?>
+                            <li><a href="<?= base_url('budget/user-groups') ?>"><i class="fa fa-edit fa-fw"></i> User Groups</a></li>
+                            <li><a href="<?= base_url('budget/users') ?>"><i class="fa fa-edit fa-fw"></i> Users</a></li>
+                            <?php endif; ?>
+                        
+							<div class="dropup usuario">
+								<a class="dropdown-toggle" data-toggle="dropdown">
+									<i class="fa fa-user fa-fw"></i> <?=$this->logged_in_email?> <i class="fa fa-caret-up"></i>
+								</a>
+								<ul class="dropdown-menu">
+									<li><a href="<?= base_url('auth/edit') ?>"><i class="fa fa-edit fa-fw"></i>Editar perfil</a></li>
+									<li role="separator" class="divider"></li>
+									<li><a href="<?= base_url('auth/logout') ?>"><i class="fa fa-sign-out fa-fw"></i>Logout</a></li>
+								</ul>
+							</div>
+						</ul>
+					</div>
+                    <!-- /.sidebar-collapse -->
+					
+                </div>
+                <!-- /.navbar-static-side -->
