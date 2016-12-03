@@ -33,12 +33,15 @@
 <!-- File Uploader -->
 <script src="<?= base_url() ?>assets/budget/js/jquery.filer.min.js"></script>
 
+<!-- JQuery Date Formatter -->
+<script src="<?= base_url() ?>assets/budget/js/jquery-dateFormat.min.js"></script>
+
+
 <!-- Script do APP -->
 <script src="<?= base_url() ?>assets/budget/js/account_lists.js"></script>
 
 <!-- Script da pag budgets -->
 <script src="<?= base_url() ?>assets/budget/js/budgets_lists.js"></script>
-
 
 <script>
     $('.dropdown-toggle').dropdown();

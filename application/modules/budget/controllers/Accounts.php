@@ -27,8 +27,10 @@ class Accounts extends Admin_Controller {
 			if ($conta_id == '') {
 				$accounts = $this->account->get_all('',array('profile_uid'=>$profile_uid),'','','data,conta_id');
 				$data['contaNome'] = "Todas as contas";
+				$data['contaID'] = 0;
 			} else {
 				$contaNome = $this->conta->get($conta_id)->conta_nome;
+				$data['contaID'] = $conta_id;
 				
 				$accounts = $this->account->get_all('',array('profile_uid' => $profile_uid,'conta_id'=>$conta_id));
 				
@@ -71,7 +73,7 @@ class Accounts extends Admin_Controller {
 			$countTr = $this->input->post('countTr');
 			$valor = ($this->input->post('totalEntrada')-$this->input->post('totalSaida'));
 			//inserir/atualizar a transacao, depois vemos as filhas:
-			var_dump($this->input->post('contaID'));
+			
 			$data['conta_id'] = $this->input->post('contaID');
 			$dataA = explode('/',$this->input->post('dataTr'));
 			$dataF = $dataA[2] . '-' . $dataA[1] . '-' . $dataA[0];
@@ -86,12 +88,11 @@ class Accounts extends Admin_Controller {
 				$sql = $this->db->update_string('transacoes', $data, $where);
 				$transacaoID = $this->input->post('transacaoID');
 				$this->db->query($sql);
-				echo $sql . "\n";
+				echo $transacaoID;
 			} else {
 				$data['created'] =  date("Y-m-d H:i:s");
 				$sql = $this->db->insert_string('transacoes', $data);
 				$this->db->query($sql);
-				echo $sql . "\n";
 				$id = $this->db->insert_id();
 				$transacaoID = $id;
 				echo $transacaoID;
@@ -112,14 +113,12 @@ class Accounts extends Admin_Controller {
 					$subData['modified'] = date("Y-m-d H:i:s");
 					$subsql = $this->db->update_string('transacoesitens',$subData,$subwhere);
 					$this->db->query($subsql);
-					echo $subsql . "\n";				
 					array_push($aTritem_ID,$this->input->post('tritem_id'));
 				} else {
 					$subData['created'] = date("Y-m-d H:i:s");
 					$subData['modified'] = date("Y-m-d H:i:s");
 					$subsql = $this->db->insert_string('transacoesitens',$subData);
 					$this->db->query($subsql);
-					echo $subsql . "\n";				
 					array_push($aTritem_ID,$this->db->insert_id());
 				}
 			} else {
@@ -147,14 +146,12 @@ class Accounts extends Admin_Controller {
 						$subData['modified'] = date("Y-m-d H:i:s");
 						$subsql = $this->db->update_string('transacoesitens',$subData,$subwhere);
 						$this->db->query($subsql);
-						echo $subsql . " " .  "\n";
 						array_push($aTritem_ID,$this->input->post('tritem_id_' . $i));
 					} else {
 						$subData['created'] = date("Y-m-d H:i:s");
 						$subData['modified'] = date("Y-m-d H:i:s");
 						$subsql = $this->db->insert_string('transacoesitens',$subData);
 						$this->db->query($subsql);
-						echo $subsql . " " .  "\n";
 						array_push($aTritem_ID,$this->db->insert_id());
 					}
 				}

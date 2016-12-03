@@ -1,6 +1,8 @@
 <script>
 	var contas = <?php echo json_encode(array_values($contas)); ?>;
 	var categorias = <?php echo json_encode(array_values($categorias)); ?>;
+	var contaID = <?php echo json_encode($contaID); ?>;	
+	var contaNome = <?php echo json_encode($contaNome); ?>;
 </script>
 
 <!-- Navigation -->
@@ -51,14 +53,14 @@
 		data-sort-name="date">
 			<thead>
 				<tr><th id="thckAll" data-checkbox="true"></th>
-					<th data-sortable="true" class="col-md-2">Conta</th>
+					<th data-sortable="true" class="col-md-2" data-filed="conta">Conta</th>
 					<th data-sortable="true" class="col-md-2" data-field="date" data-sort-name="_date_data" data-sorter="monthSorter">Data</th>
-					<th data-sortable="true" class="col-md-4">Sacado</th>
-					<th data-sortable="true" class="col-md-4">Categoria</th>
-					<th data-sortable="true" class="col-md-4">Memo</th>
-					<th data-sortable="true" class="col-md-2">Saída</th>
-					<th data-sortable="true" class="col-md-2">Entrada</th>
-					<th data-sortable="true" class="col-md-2">Saldo</th>
+					<th data-sortable="true" class="col-md-4" data-field="sacado">Sacado</th>
+					<th data-sortable="true" class="col-md-4" data-field="categoria">Categoria</th>
+					<th data-sortable="true" class="col-md-4" data-field="memo">Memo</th>
+					<th data-sortable="true" class="col-md-2" data-field="saida">Saída</th>
+					<th data-sortable="true" class="col-md-2" data-field="entrada">Entrada</th>
+					<th data-sortable="true" class="col-md-2" data-field="saldo">Saldo</th>
 				</tr>
 			</thead>
 			<tbody>
