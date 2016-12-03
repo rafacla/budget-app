@@ -2,9 +2,11 @@ var $table = $('#tbTransacoes');
 var request;
 var filer;
 var ofx_resultado;
+var curDate = new Date();
 
 $(function() {
-	$('#tbTransacoes').find('tr').click( function(){
+	$(document).on('click', '#tbTransacoes tr', function() {
+	//$('#tbTransacoes').find('tr').click( function(){
 		if ($(this).hasClass('selected')) {
 			if (!$('#tbTransacoes .editaTransacao').length) {
 				if ($(this).attr('data-editavel')==1) {
@@ -61,7 +63,7 @@ $(function() {
 });
 
 function geraListaContas() {
-	var lista = '<select name="conta">';
+	var lista = '<select name="conta" id="importarNaConta">';
 	for (i=0;i<contas.length;i++) {
 		lista += '<option value='+contas[i].id+'>'+contas[i].conta_nome+'</option>'
 	}
@@ -83,6 +85,9 @@ function lerPreviaOFX(arrayOFX,arrayOFX_unparse) {
 	sHTML += `<input type="text" style="display:none" name="old_url" value="`+window.location.href+`">`;
 	sHTML += `<br /><br /><p><strong>Deseja continuar a importação?</strong></p>`;
 	$('#OFX_Resultado').append(sHTML);
+	if (contaNome!='') {
+		$('#importarNaConta').val(contaID);
+	}
 	$('#btImportarFinal').prop('disabled',false);
 }
 
@@ -144,15 +149,6 @@ document.onkeydown = function(evt) {
     }
 };
 
-$('#tbTransacoes').onkeyup = function(evt) {
-	alert(evt);	
-	evt = evt || window.event;
-	if (evt.keyCode == 13) {
-		if ($('#tbTransacoes .editaTransacao').length) {
-			$('#tbTransacoes #btSalvar').click();
-		}
-	}
-};
 
 function deletarTransacoesSelecionadas() {
 		
@@ -169,9 +165,14 @@ function adicionaTransacao() {
 		$('#btSalvar').fadeIn(50).fadeOut(100).fadeIn(100);
 	} else {
 		rID='New';
+		if (contaID==0) {
+			contaID='';
+			contaNome='';
+		}
 		proxNr = +$('#tbTransacoes tr:last').attr('data-index')+1;
-		htmlSum = `<tr id="r`+rID+`" data-index="`+proxNr+`" data-tid="" data-editavel="1" height="40px" style="display:none">
-					<td data-checkbox="true"></td>
+		
+		htmlSum = `<tr id="r`+rID+`" data-index="`+proxNr+`" data-tid="" data-editavel="1" style="display:none">
+					<td class="bs-checkbox"><input data-index="`+proxNr+`" name="btSelectItem" type="checkbox"></td>
 					<td id="col_conta_nome"></td>
 					<td id="col_data"></td>
 					<td id="col_sacado_nome"></td>
@@ -183,8 +184,8 @@ function adicionaTransacao() {
 				</tr>`;
 		htmEditavel = `<tr class="editaTransacao selected" id="main1" data-parent="`+rID+`">
 					<td><input name="tritem_id" value="" style="display:none"></td>
-					<td><div id="conta_nome" class="input-group-btn"><input type="text" placeholder="Conta" id="conta" data-formValue="" value="" class="form-control form-inline transacao input-sm typeahead"/></div></td>
-					<td><input name="dataTr" type="text" data-provide="datepicker" placeholder="Data" id="dataTr" value="" class="form-control form-inline transacao input-sm"></td>
+					<td><div id="conta_nome" class="input-group-btn"><input type="text" placeholder="Conta" id="conta" data-formValue="`+contaID+`" value="`+contaNome+`" class="form-control form-inline transacao input-sm typeahead"/></div></td>
+					<td><input name="dataTr" type="text" data-provide="datepicker" placeholder="Data" id="dataTr" value="`+$.format.date(curDate,'dd/MM/yyyy')+`" class="form-control form-inline transacao input-sm"></td>
 					<td><input type="text" placeholder="Sacado" data-trid="" id="sacado" name="sacado" value="" class="form-control form-inline transacao input-sm"/></td>
 					<td id="cat"></td>
 					<td><input type="text" placeholder="Memo"  data-trid="" id="memo" name="memo" value="" class="form-control form-inline transacao input-sm"/></td>
@@ -193,7 +194,7 @@ function adicionaTransacao() {
 					<td><input type="text" name="split" id="split" value="false" style="display:none"></td>
 				</tr>
 				<tr class="editaTransacao selected">
-					<td></td><td><input name="contaID" type="text" id="contaID" value="" style="display:none">
+					<td></td><td><input name="contaID" type="text" id="contaID" value="`+contaID+`" style="display:none">
 					</td><td><input type="text" name="transacaoID" id="transacaoID" value="" style="display:none"></td>
 					<td>
 						<button type="button" class="btn btn-info btn-sm" aria-label="Adicionar Subtransação"  id="btAddSub">
@@ -210,7 +211,7 @@ function adicionaTransacao() {
 					<td></td><td></td><td></td>
 					<td></td>
 					<td>
-						<button type="button" class="btn btn-success btn-sm" aria-label="Salvar" id="btSalvar">
+						<button type="submit" class="btn btn-success btn-sm" aria-label="Salvar" id="btSalvar">
 						  <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Salvar
 						</button>
 					</td>
@@ -239,7 +240,11 @@ function adicionaTransacao() {
 		
 		$('#tbTransacoes').find('#countTr').val(1);
 		ligaCompletar();
-		$('#tbTransacoes #conta').focus();
+		if (contaNome=='') {
+			$('#tbTransacoes #conta').focus();
+		} else {
+			$('#tbTransacoes #sacado').focus();
+		}
 	}
 }
 
@@ -370,10 +375,10 @@ function salvaTransacao() {
         type: "post",
         data: serializedData
     });
-
+	var newID='';
     // Callback handler that will be called on success
     request.done(function (response, textStatus, jqXHR){
-		
+		newID = JSON.stringify(response);
     });
 
     // Callback handler that will be called on failure
@@ -392,28 +397,35 @@ function salvaTransacao() {
         // Reenable the inputs
         $inputs.prop("disabled", false);
     });
-	
+	//rID='New';
 	//Deu certo, vamos atualizar a primeira linha e deletar a edição:
-		$inputs.prop("disabled", false);
-		var linhaEditada = $('#tbTransacoes').find('[id^=main]');
-		var linhaEditar = $('#r' + $('#tbTransacoes').find('[id^=main]').attr('data-parent'));
-		linhaEditar.fadeIn(20);		
-		linhaEditar.find('#col_conta_nome').html(linhaEditada.find('#conta').val());
-		linhaEditar.find('#col_data').html(linhaEditada.find('#dataTr').val());
-		linhaEditar.find('#col_sacado_nome').html(linhaEditada.find('#sacado').val());
-		var data = linhaEditada.find('#categoria').select2('data');
-		linhaEditar.find('#col_categoria').html(data[0].text);
-		linhaEditar.find('#col_memo').html(linhaEditada.find('#memo').val());
-		total = +linhaEditar.find('#col_entrada').html()-linhaEditar.find('#col_saida').html();
-		
-		totalNovo = +linhaEditada.find('#totalEntrada').val()-linhaEditada.find('#totalSaida').val();
-		
-		saldo = +linhaEditar.find('#col_saldo').html()+(totalNovo-total)
-		linhaEditar.find('#col_saida').html(linhaEditada.find('#totalSaida').val());
-		linhaEditar.find('#col_entrada').html(linhaEditada.find('#totalEntrada').val());
-		linhaEditar.find('#col_saldo').html(saldo);
-		cancelaEdicao(true);
-		//TODO: rotina para recalcular todo o saldo e o sidemenu
+	$inputs.prop("disabled", false);
+	var linhaEditada = $('#tbTransacoes').find('[id^=main]');
+	var linhaEditar = $('#r' + $('#tbTransacoes').find('[id^=main]').attr('data-parent'));
+	linhaEditar.fadeIn(20);		
+	linhaEditar.find('#col_conta_nome').html(linhaEditada.find('#conta').val());
+	linhaEditar.find('#col_data').html(linhaEditada.find('#dataTr').val());
+	linhaEditar.find('#col_sacado_nome').html(linhaEditada.find('#sacado').val());
+	var data = linhaEditada.find('#categoria').select2('data');
+	linhaEditar.find('#col_categoria').html(data[0].text);
+	linhaEditar.find('#col_memo').html(linhaEditada.find('#memo').val());
+	total = +linhaEditar.find('#col_entrada').html()-linhaEditar.find('#col_saida').html();
+	
+	totalNovo = +linhaEditada.find('#totalEntrada').val()-linhaEditada.find('#totalSaida').val();
+	
+	saldo = +linhaEditar.find('#col_saldo').html()+(totalNovo-total)
+	linhaEditar.find('#col_saida').html(linhaEditada.find('#totalSaida').val());
+	linhaEditar.find('#col_entrada').html(linhaEditada.find('#totalEntrada').val());
+	linhaEditar.find('#col_saldo').html(saldo);
+	
+	console.log(newID);
+	if ($('#tbTransacoes').find('[id^=main]').attr('data-parent') == 'New') {
+		linhaEditar.attr('id','r'+linhaEditar.attr('data-index'));
+		linhaEditar.attr('data-tid',newID);
+	}
+	cancelaEdicao(true);
+	
+	//TODO: rotina para recalcular todo o saldo e o sidemenu
 		
 }
 
@@ -502,7 +514,13 @@ function ligaCompletar() {
 		language: "pt-BR",
 		todayHighlight: true
 	}).on('changeDate', function (date, options) {
-		$('#sacado').focus();
+		//$('#sacado').focus();
+		//var parts = date.split('/');
+	//please put attention to the month (parts[0]), Javascript counts months from 0:
+	// January - 0, February - 1, etc
+		//curDate= new Date(parts[2],parts[0]-1,parts[1]); 
+		curDate = date.date;
+		$(this).select();
 	});
 }
 
