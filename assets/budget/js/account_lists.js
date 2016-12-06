@@ -404,6 +404,11 @@ function removeSelect2() {
 }
 
 function salvaTransacao() {
+	//NAO PERMITE SALVAR SE A TRANSAÇÃO TIVER DESABALANCEADA:
+	if (+$('#faltandoEntrada').text()!=0 || +$('#faltandoSaida').text()!=0) {
+		alert('Os subitens da sua transação não coincidem com os valores da sua transação.\n\nCorrija os valores usando a linha Faltando distribuir!');
+		return -1;
+	}
 	
 	// Abort any pending request
     if (request) {
@@ -496,8 +501,7 @@ function salvaTransacao() {
 	
 	cancelaEdicao(true);
 	
-	//TODO: rotina para recalcular todo o saldo e o sidemenu
-		
+	calculaSaldoGlobal();
 }
 
 // constructs the suggestion engine
@@ -553,6 +557,43 @@ function ligaCompletar() {
 		} else {
 			$('#tbTransacoes #categoria_'+$('#'+ev.target.id).attr('data-intTr')).prop('disabled',false);
 		}
+	});
+	
+	$('#tbTransacoes').find('[id^=saida_]').focusout( function() {
+		var nomeCampo = $(this).attr('id');
+		if (!$.isNumeric($(this).val())) {
+			$(this).val('0');
+		} else if ($(this).val()!=0) {
+			$('#entrada_'+nomeCampo.substr(6,nomeCampo.length - 6)).val('0');
+		}
+		calculaDiferenca();
+	});
+	
+	$('#tbTransacoes').find('[id^=entrada_]').focusout( function() {
+		if (!$.isNumeric($(this).val())) {
+			$(this).val('0');
+		} else if ($(this).val()!=0) {
+			$('#saida_'+nomeCampo.substr(8,nomeCampo.length - 8)).val('0');
+		}
+		calculaDiferenca();
+	});
+	
+	$('#tbTransacoes #totalSaida').focusout( function() {
+		if (!$.isNumeric($(this).val())) {
+			$(this).val('0');
+		} else if ($(this).val()!=0) {
+			$('#totalEntrada').val('0');
+		}
+		calculaDiferenca();
+	});
+	
+	$('#tbTransacoes #totalEntrada').focusout( function() {
+		if (!$.isNumeric($(this).val())) {
+			$(this).val('0');
+		} else if ($(this).val()!=0) {
+			$('#totalSaida').val('0');
+		}
+		calculaDiferenca();
 	});
 	
 	$('#conta').bind('typeahead:autocomplete', function(ev, suggestion) {
@@ -618,6 +659,10 @@ function ligaCompletar() {
 		curDate = date.date;
 		$(this).select();
 	});
+	
+	jQuery(function($) {
+		$('input.valor').autoNumeric('init',{aSep: '', aSign: '', vMin: '-999999999.99'});    
+  	});
 }
 
 function salvaOpcao (valor, campo) {
@@ -628,4 +673,56 @@ function monthSorter(a, b) {
     if (a.month < b.month) return -1;
     if (a.month > b.month) return 1;
     return 0;
+}
+
+function calculaDiferenca() {
+	var sumSaida = 0
+	$('#tbTransacoes').find('[id^=saida_]').each(function () {
+        sumSaida += 1*($(this).val());
+    });
+	var sumEntrada = 0
+	$('#tbTransacoes').find('[id^=entrada_]').each(function () {
+        sumEntrada += 1*($(this).val());
+    });
+	if ($('#tbTransacoes #saida_0').length) {
+		$('#tbTransacoes #faltandoEntrada').text(parseFloat(+$('#tbTransacoes #totalEntrada').val()-sumEntrada).toFixed(2));
+		$('#tbTransacoes #faltandoSaida').text(parseFloat(+$('#tbTransacoes #totalSaida').val()-sumSaida).toFixed(2));
+	} else {
+		$('#tbTransacoes #faltandoEntrada').text('0.00');
+		$('#tbTransacoes #faltandoSaida').text('0.00');
+	}
+}
+
+function calculaSaldoGlobal() {
+	var sumSaidaConta = {};
+	var sumEntradaConta = {};
+	var sumSaida = 0;
+	$('#tbTransacoes #col_saida').each(function () {
+        sumSaida += 1*($(this).text());
+		if (!$.isNumeric(sumSaidaConta[$(this).parent('tr').find('#col_conta_nome').text()]))
+			sumSaidaConta[$(this).parent('tr').find('#col_conta_nome').text()]=0;
+		sumSaidaConta[$(this).parent('tr').find('#col_conta_nome').text()]+=1*($(this).text());
+    });
+	var sumEntrada = 0;
+	$('#tbTransacoes #col_entrada').each(function () {
+        sumEntrada += 1*($(this).text());
+		if (!$.isNumeric(sumEntradaConta[$(this).parent('tr').find('#col_conta_nome').text()]))
+			sumEntradaConta[$(this).parent('tr').find('#col_conta_nome').text()]=0;
+		sumEntradaConta[$(this).parent('tr').find('#col_conta_nome').text()]+=1*($(this).text());
+    });
+	var saldoTotal = sumEntrada - sumSaida;
+	$('#saldoGeral').text(parseFloat(saldoTotal).toFixed(2));
+	$('#somaTotal').text(parseFloat(saldoTotal).toFixed(2));
+	if (saldoTotal>=0) {
+		$('#saldoGeral').removeClass('SaldoNeg');
+		$('#saldoGeral').addClass('SaldoPos');
+	} else {
+		$('#saldoGeral').addClass('SaldoNeg');
+		$('#saldoGeral').removeClass('SaldoPos');
+	}
+	$(document).find('[id^=menu_saldo_]').each(function () {
+			var nomeConta = $(this).attr('id');
+			nomeConta = nomeConta.substr(11,nomeConta.length-11);
+			$(this).text(parseFloat(+sumEntradaConta[nomeConta]-sumSaidaConta[nomeConta]).toFixed(2));
+	});
 }

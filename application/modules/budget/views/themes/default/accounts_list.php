@@ -21,7 +21,7 @@
 		<div class="tipDireita">
 			<span><?php echo $contaNome; ?></span>
 		</div>
-		<div class="exibeInformacoes"><span class="Titulo">Saldo:</span><br/><span class="<?=($saldo>=0 ? "SaldoPos" : "SaldoNeg")?>"><?="$".number_format($saldo, 2, '.', '')?></span></div>
+		<div class="exibeInformacoes"><span class="Titulo">Saldo:</span><br/><span id="saldoGeral" class="<?=($saldo>=0 ? "SaldoPos" : "SaldoNeg")?>"><?="$".number_format($saldo, 2, '.', '')?></span></div>
 	</ul>
 </nav>
 
@@ -89,14 +89,14 @@
 										} else {
 											echo $list['categoria'];
 										} ?></td>
-								<td id="col_memo"><?=$list['memo']?></td>
-								<td id="col_saida"><?=($list['valor']<0) ? (-1)*$list['valor'] : 0?></td>
-								<td id="col_entrada"><?=($list['valor']>=0) ? $list['valor'] : 0?></td>
-								<td id="col_saldo"><?php 
-										if(!isset($saldo[$list['conta_nome']]))
-											$saldo[$list['conta_nome']]=0;
-										$saldo[$list['conta_nome']] = $saldo[$list['conta_nome']] + $list['valor'];
-										echo $saldo[$list['conta_nome']];
+								<td id="col_memo" class="valores"><?=$list['memo']?></td>
+								<td id="col_saida" class="valores"><?=($list['valor']<0) ? number_format((-1)*$list['valor'], 2, '.', '') : "0.00"?></td>
+								<td id="col_entrada" class="valores"><?=($list['valor']>=0) ? number_format($list['valor'], 2, '.', '') : "0.00"?></td>
+								<td id="col_saldo" class="valores"><?php 
+										if(!isset($saldo['geral']))
+											$saldo['geral']=0;
+										$saldo['geral'] = $saldo['geral'] + $list['valor'];
+										echo number_format($saldo['geral'],2,'.','');
 									?></td>	
 							</tr>
 						<?php endif; ?>
@@ -158,9 +158,9 @@
 								  <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Subtransação/Transferência
 								</button>
 							</td>							
-							<td style="text-align: right">Faltando distribuir:</td><td></td>
-							<td></td>
-							<td></td>
+							<td style="text-align: right" class="valores">Faltando distribuir:</td><td></td>
+							<td><span id="faltandoSaida" class="account valores">0</span></td>
+							<td><span id="faltandoEntrada" class="account valores">0</span></td>
 							<td></td>
 						</tr>
 						<tr class="editaTransacao">
@@ -197,8 +197,8 @@
 								<td><input type="text" placeholder="Sacado" data-trid="<?=$list['tritem_id']?>" id="sacado" name="sacado" value="<?=$list['sacado_nome']?>" class="form-control form-inline transacao input-sm"/></td>
 								<td><?=($list['count_filhas']<=1) ? geraCategorias("categoria",$list['tritem_id'],$categorias,$list['catitem_id'],true) : geraCategorias("categoria",$list['tritem_id'],$categorias,"multiplos",true)?></td>
 								<td><input type="text" placeholder="Memo"  data-trid="<?=$list['tritem_id']?>" id="memo" name="memo" value="<?=$list['memo']?>" class="form-control form-inline transacao input-sm"/></td>
-								<td><input type="text" name="totalSaida" placeholder="Saída" id="totalSaida" value="<?=($list['valor']<0) ? (-1)*$list['valor'] : "0"?>" class="form-control form-inline transacao input-sm"/></td>
-								<td><input type="text" name="totalEntrada" placeholder="Entrada" id="totalEntrada" value="<?=($list['valor']>=0) ? $list['valor'] : "0"?>" class="form-control form-inline transacao input-sm"/></td>
+								<td><input type="text" name="totalSaida" placeholder="Saída" id="totalSaida" value="<?=($list['valor']<0) ? (-1)*$list['valor'] : "0"?>" class="form-control form-inline transacao input-sm valor"/></td>
+								<td><input type="text" name="totalEntrada" placeholder="Entrada" id="totalEntrada" value="<?=($list['valor']>=0) ? $list['valor'] : "0"?>" class="form-control form-inline transacao input-sm valor"/></td>
 								<td><input type="text" name="split" id="split" value="<?=($list['count_filhas']>1 || $list['conta_para_id']!='') ? "true" : "false" ?>" style="display:none"></td>
 							</tr>
 						<?php endif; ?>
@@ -210,8 +210,8 @@
 							<td><div id="conta_nome" class="input-group-btn"><input type="text" placeholder="Transferir para:" data-trid="<?=$list['tritem_id']?>" id="transferir_<?=$intTr?>" name="transferir_<?=$intTr?>" data-intTr="<?=$intTr?>" value="<?=$list['conta_para_nome']?>" class="form-control form-inline transacao input-sm typeahead transferir_para"/></div></td>
 							<td><?=geraCategorias("categoria_".$intTr,$list['tritem_id'],$categorias,$list['catitem_id'],false)?></td>
 							<td><input type="text" placeholder="Memo"  data-trid="<?=$list['tritem_id']?>" id="memo_<?=$intTr?>" name="memo_<?=$intTr?>" value="<?=$list['memo']?>" class="form-control form-inline transacao input-sm" disabled/></td>
-							<td><input type="text" placeholder="Saída" data-trid="<?=$list['tritem_id']?>"  id="saida_<?=$intTr?>" name="saida_<?=$intTr?>" value="<?=($list['valor_item']<0) ? (-1)*$list['valor_item'] : ''?>" class="form-control form-inline transacao input-sm"/></td>
-							<td><input type="text" placeholder="Entrada" data-trid="<?=$list['tritem_id']?>"  id="entrada_<?=$intTr?>" name="entrada_<?=$intTr?>" value="<?=($list['valor_item']>=0) ? $list['valor_item'] : ''?>" class="form-control form-inline transacao input-sm"/></td>
+							<td><input type="text" placeholder="Saída" data-trid="<?=$list['tritem_id']?>"  id="saida_<?=$intTr?>" name="saida_<?=$intTr?>" value="<?=($list['valor_item']<0) ? (-1)*$list['valor_item'] : ''?>" class="form-control form-inline transacao input-sm valor"/></td>
+							<td><input type="text" placeholder="Entrada" data-trid="<?=$list['tritem_id']?>"  id="entrada_<?=$intTr?>" name="entrada_<?=$intTr?>" value="<?=($list['valor_item']>=0) ? $list['valor_item'] : ''?>" class="form-control form-inline transacao input-sm valor"/></td>
 							<td></td>
 						</tr>
 						<?php endif;?>
@@ -227,9 +227,9 @@
 								  <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Subtransação/Transferência
 								</button>
 							</td>							
-							<td style="text-align: right">Faltando distribuir:</td><td></td>
-							<td></td>
-							<td></td>
+							<td style="text-align: right" class="valores">Faltando distribuir:</td><td></td>
+							<td><span id="faltandoSaida" class="account valores">0</span></td>
+							<td><span id="faltandoEntrada" class="account valores">0</span></td>
 							<td></td>
 						</tr>
 						<tr class="editaTransacao">

@@ -37,7 +37,7 @@ class Accounts extends Admin_Controller {
 				$data['contaNome'] = $contaNome;
 			}
 			
-			$data['saldo'] = array_sum(array_column($accounts,'valor'));
+			$data['saldo'] = array_sum(array_column($accounts,'valor_item'));
 			$data['accounts'] = $accounts;
 			$data['contas'] = $contas;
 			$data['categorias'] = $categorias;
