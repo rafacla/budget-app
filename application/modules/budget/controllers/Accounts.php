@@ -83,19 +83,21 @@ class Accounts extends Admin_Controller {
 			$data['memo'] = $this->input->post('memo');
 			$data['valor'] = $valor;
 			$data['modified'] = date("Y-m-d H:i:s");
+			$resposta = array();
 			if ($this->input->post('transacaoID')) {
 				$where = "id = " .  $this->input->post('transacaoID');
 				$sql = $this->db->update_string('transacoes', $data, $where);
 				$transacaoID = $this->input->post('transacaoID');
 				$this->db->query($sql);
-				echo $transacaoID;
+				$id = $transacaoID;
+				array_push($resposta,$transacaoID);
 			} else {
 				$data['created'] =  date("Y-m-d H:i:s");
 				$sql = $this->db->insert_string('transacoes', $data);
 				$this->db->query($sql);
 				$id = $this->db->insert_id();
 				$transacaoID = $id;
-				echo $transacaoID;
+				array_push($resposta,$transacaoID);
 			}
 			
 			//insere/atualiza subtransacoes
@@ -169,6 +171,9 @@ class Accounts extends Admin_Controller {
 					}
 				}
 			}
+			array_push($resposta,count($aTritem_ID));
+			array_push($resposta,$aTritem_ID);
+			echo json_encode($resposta);
         }
     }
 	

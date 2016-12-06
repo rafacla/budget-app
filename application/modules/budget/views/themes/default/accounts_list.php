@@ -42,7 +42,7 @@
 			</div>
 			<a data-toggle="modal" href="#importaTransacoes" id="btImport"><i class="fa fa-upload fa-fw"></i>Importar</a>
 		</div>
-	<form id="formTransacoes">	
+	<form id="formTransacoes" method="post">	
 	<table class="table table-hover table-no-bordered tabela" id="tbTransacoes" 
 		data-toggle="table"
 		data-search="true"
@@ -52,7 +52,7 @@
 		data-locale="pt-BR"
 		data-sort-name="date">
 			<thead>
-				<tr><th id="thckAll" data-checkbox="true"></th>
+				<tr><th id="thckAll"><input type="checkbox" id="ckbAll" data-indice="todas"></th>
 					<th data-sortable="true" class="col-md-2" data-filed="conta">Conta</th>
 					<th data-sortable="true" class="col-md-2" data-field="date" data-sort-name="_date_data" data-sorter="monthSorter">Data</th>
 					<th data-sortable="true" class="col-md-4" data-field="sacado">Sacado</th>
@@ -74,8 +74,8 @@
 				<?php if (count($accounts)): ?>
 					<?php foreach ($accounts as $key => $list): ?>
 						<?php if (($tID != $list['transacao_id']) || ($contaID!=$list['conta_id'])): ?>
-							<tr id="r<?=$i?>" data-index="<?=$i?>" data-tid="<?=$list['transacao_id']?>" data-editavel="<?=$list['editavel']?>" height="40px" >
-								<td data-checkbox="true"></td>
+							<tr id="r<?=$i?>" data-indice="<?=$i?>" data-tid="<?=$list['transacao_id']?>" data-editavel="<?=$list['editavel']?>" height="40px" >
+								<td><input data-indice="<?=$i?>" type="checkbox" id="ck<?=$i?>"></td>
 								<td id="col_conta_nome"><?=$list['conta_nome']?></td>
 								<td id="col_data" data-month="<?=substr($list['data'],-4).substr($list['data'],3,2).substr($list['data'],0,2)?>"><?=$list['data']?></td>
 								<td id="col_sacado_nome"><?=$list['sacado_nome']?></td>
@@ -146,7 +146,7 @@
 			}
 		?>
 		<div style="display: none;">
-			<table>
+			<table id="tbEdicao">
 			<?php $i=0; $ultLinha=0; $intTr=0; if (count($accounts)): ?>
 				<?php foreach ($accounts as $key => $list): ?>
 					<?php if ((($tID != $list['transacao_id']) || ($contaID!=$list['conta_id'])) && $tID!=0): ?>
@@ -191,7 +191,7 @@
 						}?>
 						<?php if ((($tID != $list['transacao_id']) || ($contaID!=$list['conta_id']))): ?>
 							<tr class="editaTransacao selected" id="main<?=$intTr+1?>" data-parent="<?=$ultLinha?>">
-								<td><input name="tritem_id" value="<?=$list['tritem_id']?>" style="display:none"></td>
+								<td><input name="tritem_id" id="tritem_id" value="<?=$list['tritem_id']?>" style="display:none"></td>
 								<td><div id="conta_nome" class="input-group-btn"><input type="text" placeholder="Conta" id="conta" data-formValue="<?=$list['conta_id']?>" value="<?=$list['conta_nome']?>" class="form-control form-inline transacao input-sm typeahead conta"/></div></td>
 								<td><input name="dataTr" type="text" data-provide="datepicker" placeholder="Data" id="dataTr" value="<?=$list['data']?>" class="form-control form-inline transacao input-sm"></td>
 								<td><input type="text" placeholder="Sacado" data-trid="<?=$list['tritem_id']?>" id="sacado" name="sacado" value="<?=$list['sacado_nome']?>" class="form-control form-inline transacao input-sm"/></td>
@@ -204,8 +204,8 @@
 						<?php endif; ?>
 						<?php if ($list['count_filhas']>1 || $list['conta_para_id']!=''):?>
 						<tr class="editaTransacao selected" id="sub<?=$intTr+1?>" data-parent="<?=$ultLinha?>">
-							<td><input type="text" name="transferir_para_id_<?=$intTr?>" id="transferir_para_id_<?=$intTr?>" value="<?=$list['conta_para_id']?>" style="display:none"></td>
-							<td><input name="tritem_id_<?=$intTr?>" value="<?=$list['tritem_id']?>" style="display:none"></td>
+							<td><input class="transfpara" type="text" name="transferir_para_id_<?=$intTr?>" id="transferir_para_id_<?=$intTr?>" value="<?=$list['conta_para_id']?>" style="display:none"></td>
+							<td><input id="tritem_id_<?=$intTr?>" name="tritem_id_<?=$intTr?>" value="<?=$list['tritem_id']?>" style="display:none"></td>
 							<td align="right"><a href="#"><span style="font-size: 22px; padding-top:4px;" class="glyphicon glyphicon-remove-circle" aria-hidden="true" id="remSubt" data-id="<?=$intTr?>"></span></a></td>
 							<td><div id="conta_nome" class="input-group-btn"><input type="text" placeholder="Transferir para:" data-trid="<?=$list['tritem_id']?>" id="transferir_<?=$intTr?>" name="transferir_<?=$intTr?>" data-intTr="<?=$intTr?>" value="<?=$list['conta_para_nome']?>" class="form-control form-inline transacao input-sm typeahead transferir_para"/></div></td>
 							<td><?=geraCategorias("categoria_".$intTr,$list['tritem_id'],$categorias,$list['catitem_id'],false)?></td>
