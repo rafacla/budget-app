@@ -21,7 +21,7 @@
 		<div class="tipDireita">
 			<span><?php echo $contaNome; ?></span>
 		</div>
-		<div class="exibeInformacoes"><span class="Titulo">Saldo:</span><br/><span class="<?=($saldo>=0 ? "SaldoPos" : "SaldoNeg")?>"><?="$".number_format($saldo, 2, '.', '')?></span></div>
+		<div class="exibeInformacoes"><span class="Titulo">Saldo:</span><br/><span id="saldoGeral" class="<?=($saldo>=0 ? "SaldoPos" : "SaldoNeg")?>"><?="$".number_format($saldo, 2, '.', '')?></span></div>
 	</ul>
 </nav>
 
@@ -42,7 +42,7 @@
 			</div>
 			<a data-toggle="modal" href="#importaTransacoes" id="btImport"><i class="fa fa-upload fa-fw"></i>Importar</a>
 		</div>
-	<form id="formTransacoes">	
+	<form id="formTransacoes" method="post">	
 	<table class="table table-hover table-no-bordered tabela" id="tbTransacoes" 
 		data-toggle="table"
 		data-search="true"
@@ -52,7 +52,7 @@
 		data-locale="pt-BR"
 		data-sort-name="date">
 			<thead>
-				<tr><th id="thckAll" data-checkbox="true"></th>
+				<tr><th id="thckAll"><input type="checkbox" id="ckbAll" data-indice="todas"></th>
 					<th data-sortable="true" class="col-md-2" data-filed="conta">Conta</th>
 					<th data-sortable="true" class="col-md-2" data-field="date" data-sort-name="_date_data" data-sorter="monthSorter">Data</th>
 					<th data-sortable="true" class="col-md-4" data-field="sacado">Sacado</th>
@@ -74,8 +74,8 @@
 				<?php if (count($accounts)): ?>
 					<?php foreach ($accounts as $key => $list): ?>
 						<?php if (($tID != $list['transacao_id']) || ($contaID!=$list['conta_id'])): ?>
-							<tr id="r<?=$i?>" data-index="<?=$i?>" data-tid="<?=$list['transacao_id']?>" data-editavel="<?=$list['editavel']?>" height="40px" >
-								<td data-checkbox="true"></td>
+							<tr id="r<?=$i?>" data-indice="<?=$i?>" data-tid="<?=$list['transacao_id']?>" data-editavel="<?=$list['editavel']?>" height="40px" >
+								<td><input data-indice="<?=$i?>" type="checkbox" id="ck<?=$i?>"></td>
 								<td id="col_conta_nome"><?=$list['conta_nome']?></td>
 								<td id="col_data" data-month="<?=substr($list['data'],-4).substr($list['data'],3,2).substr($list['data'],0,2)?>"><?=$list['data']?></td>
 								<td id="col_sacado_nome"><?=$list['sacado_nome']?></td>
@@ -89,14 +89,14 @@
 										} else {
 											echo $list['categoria'];
 										} ?></td>
-								<td id="col_memo"><?=$list['memo']?></td>
-								<td id="col_saida"><?=($list['valor']<0) ? (-1)*$list['valor'] : 0?></td>
-								<td id="col_entrada"><?=($list['valor']>=0) ? $list['valor'] : 0?></td>
-								<td id="col_saldo"><?php 
-										if(!isset($saldo[$list['conta_nome']]))
-											$saldo[$list['conta_nome']]=0;
-										$saldo[$list['conta_nome']] = $saldo[$list['conta_nome']] + $list['valor'];
-										echo $saldo[$list['conta_nome']];
+								<td id="col_memo" class="valores"><?=$list['memo']?></td>
+								<td id="col_saida" class="valores"><?=($list['valor']<0) ? number_format((-1)*$list['valor'], 2, '.', '') : "0.00"?></td>
+								<td id="col_entrada" class="valores"><?=($list['valor']>=0) ? number_format($list['valor'], 2, '.', '') : "0.00"?></td>
+								<td id="col_saldo" class="valores"><?php 
+										if(!isset($saldo['geral']))
+											$saldo['geral']=0;
+										$saldo['geral'] = $saldo['geral'] + $list['valor'];
+										echo number_format($saldo['geral'],2,'.','');
 									?></td>	
 							</tr>
 						<?php endif; ?>
@@ -146,7 +146,7 @@
 			}
 		?>
 		<div style="display: none;">
-			<table>
+			<table id="tbEdicao">
 			<?php $i=0; $ultLinha=0; $intTr=0; if (count($accounts)): ?>
 				<?php foreach ($accounts as $key => $list): ?>
 					<?php if ((($tID != $list['transacao_id']) || ($contaID!=$list['conta_id'])) && $tID!=0): ?>
@@ -158,9 +158,9 @@
 								  <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Subtransação/Transferência
 								</button>
 							</td>							
-							<td style="text-align: right">Faltando distribuir:</td><td></td>
-							<td></td>
-							<td></td>
+							<td style="text-align: right" class="valores">Faltando distribuir:</td><td></td>
+							<td><span id="faltandoSaida" class="account valores">0</span></td>
+							<td><span id="faltandoEntrada" class="account valores">0</span></td>
 							<td></td>
 						</tr>
 						<tr class="editaTransacao">
@@ -191,27 +191,27 @@
 						}?>
 						<?php if ((($tID != $list['transacao_id']) || ($contaID!=$list['conta_id']))): ?>
 							<tr class="editaTransacao selected" id="main<?=$intTr+1?>" data-parent="<?=$ultLinha?>">
-								<td><input name="tritem_id" value="<?=$list['tritem_id']?>" style="display:none"></td>
+								<td><input name="tritem_id" id="tritem_id" value="<?=$list['tritem_id']?>" style="display:none"></td>
 								<td><div id="conta_nome" class="input-group-btn"><input type="text" placeholder="Conta" id="conta" data-formValue="<?=$list['conta_id']?>" value="<?=$list['conta_nome']?>" class="form-control form-inline transacao input-sm typeahead conta"/></div></td>
 								<td><input name="dataTr" type="text" data-provide="datepicker" placeholder="Data" id="dataTr" value="<?=$list['data']?>" class="form-control form-inline transacao input-sm"></td>
 								<td><input type="text" placeholder="Sacado" data-trid="<?=$list['tritem_id']?>" id="sacado" name="sacado" value="<?=$list['sacado_nome']?>" class="form-control form-inline transacao input-sm"/></td>
 								<td><?=($list['count_filhas']<=1) ? geraCategorias("categoria",$list['tritem_id'],$categorias,$list['catitem_id'],true) : geraCategorias("categoria",$list['tritem_id'],$categorias,"multiplos",true)?></td>
 								<td><input type="text" placeholder="Memo"  data-trid="<?=$list['tritem_id']?>" id="memo" name="memo" value="<?=$list['memo']?>" class="form-control form-inline transacao input-sm"/></td>
-								<td><input type="text" name="totalSaida" placeholder="Saída" id="totalSaida" value="<?=($list['valor']<0) ? (-1)*$list['valor'] : "0"?>" class="form-control form-inline transacao input-sm"/></td>
-								<td><input type="text" name="totalEntrada" placeholder="Entrada" id="totalEntrada" value="<?=($list['valor']>=0) ? $list['valor'] : "0"?>" class="form-control form-inline transacao input-sm"/></td>
+								<td><input type="text" name="totalSaida" placeholder="Saída" id="totalSaida" value="<?=($list['valor']<0) ? (-1)*$list['valor'] : "0"?>" class="form-control form-inline transacao input-sm valor"/></td>
+								<td><input type="text" name="totalEntrada" placeholder="Entrada" id="totalEntrada" value="<?=($list['valor']>=0) ? $list['valor'] : "0"?>" class="form-control form-inline transacao input-sm valor"/></td>
 								<td><input type="text" name="split" id="split" value="<?=($list['count_filhas']>1 || $list['conta_para_id']!='') ? "true" : "false" ?>" style="display:none"></td>
 							</tr>
 						<?php endif; ?>
 						<?php if ($list['count_filhas']>1 || $list['conta_para_id']!=''):?>
 						<tr class="editaTransacao selected" id="sub<?=$intTr+1?>" data-parent="<?=$ultLinha?>">
-							<td><input type="text" name="transferir_para_id_<?=$intTr?>" id="transferir_para_id_<?=$intTr?>" value="<?=$list['conta_para_id']?>" style="display:none"></td>
-							<td><input name="tritem_id_<?=$intTr?>" value="<?=$list['tritem_id']?>" style="display:none"></td>
+							<td><input class="transfpara" type="text" name="transferir_para_id_<?=$intTr?>" id="transferir_para_id_<?=$intTr?>" value="<?=$list['conta_para_id']?>" style="display:none"></td>
+							<td><input id="tritem_id_<?=$intTr?>" name="tritem_id_<?=$intTr?>" value="<?=$list['tritem_id']?>" style="display:none"></td>
 							<td align="right"><a href="#"><span style="font-size: 22px; padding-top:4px;" class="glyphicon glyphicon-remove-circle" aria-hidden="true" id="remSubt" data-id="<?=$intTr?>"></span></a></td>
 							<td><div id="conta_nome" class="input-group-btn"><input type="text" placeholder="Transferir para:" data-trid="<?=$list['tritem_id']?>" id="transferir_<?=$intTr?>" name="transferir_<?=$intTr?>" data-intTr="<?=$intTr?>" value="<?=$list['conta_para_nome']?>" class="form-control form-inline transacao input-sm typeahead transferir_para"/></div></td>
 							<td><?=geraCategorias("categoria_".$intTr,$list['tritem_id'],$categorias,$list['catitem_id'],false)?></td>
 							<td><input type="text" placeholder="Memo"  data-trid="<?=$list['tritem_id']?>" id="memo_<?=$intTr?>" name="memo_<?=$intTr?>" value="<?=$list['memo']?>" class="form-control form-inline transacao input-sm" disabled/></td>
-							<td><input type="text" placeholder="Saída" data-trid="<?=$list['tritem_id']?>"  id="saida_<?=$intTr?>" name="saida_<?=$intTr?>" value="<?=($list['valor_item']<0) ? (-1)*$list['valor_item'] : ''?>" class="form-control form-inline transacao input-sm"/></td>
-							<td><input type="text" placeholder="Entrada" data-trid="<?=$list['tritem_id']?>"  id="entrada_<?=$intTr?>" name="entrada_<?=$intTr?>" value="<?=($list['valor_item']>=0) ? $list['valor_item'] : ''?>" class="form-control form-inline transacao input-sm"/></td>
+							<td><input type="text" placeholder="Saída" data-trid="<?=$list['tritem_id']?>"  id="saida_<?=$intTr?>" name="saida_<?=$intTr?>" value="<?=($list['valor_item']<0) ? (-1)*$list['valor_item'] : ''?>" class="form-control form-inline transacao input-sm valor"/></td>
+							<td><input type="text" placeholder="Entrada" data-trid="<?=$list['tritem_id']?>"  id="entrada_<?=$intTr?>" name="entrada_<?=$intTr?>" value="<?=($list['valor_item']>=0) ? $list['valor_item'] : ''?>" class="form-control form-inline transacao input-sm valor"/></td>
 							<td></td>
 						</tr>
 						<?php endif;?>
@@ -227,9 +227,9 @@
 								  <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Subtransação/Transferência
 								</button>
 							</td>							
-							<td style="text-align: right">Faltando distribuir:</td><td></td>
-							<td></td>
-							<td></td>
+							<td style="text-align: right" class="valores">Faltando distribuir:</td><td></td>
+							<td><span id="faltandoSaida" class="account valores">0</span></td>
+							<td><span id="faltandoEntrada" class="account valores">0</span></td>
 							<td></td>
 						</tr>
 						<tr class="editaTransacao">

@@ -91,7 +91,7 @@
 						<tr class="filha" data-parent="<?=$list['categoria_grupo']?>">
 							<td id="thckAll" data-checkbox="true"></td>
 							<td class="categoria"><?=$list['categoriaitem']?></td>
-							<td class="orcado"><input type="text" name="orcado" id="orcado" data-budgetID="<?=$list['categoriaitem_id']?>" value="<?=($list['budgetMes']=="") ? 0 : $list['budgetMes'] ?>"></td>
+							<td class="orcado"><input type="text" class="valor" name="orcado" id="orcado" data-budgetID="<?=$list['categoriaitem_id']?>" value="<?=($list['budgetMes']=="") ? 0 : $list['budgetMes'] ?>"></td>
 							<td class="gasto"><?=number_format(($list['gastoMes']=="" ? 0 : -$list['gastoMes']), 2, '.', ''); ?></td>
 							<?php
 								$valDisp=floatval($list['Disponivel']-$list['DespForaOrc']);

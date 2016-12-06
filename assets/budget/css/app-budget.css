@@ -908,3 +908,8 @@ overflow-y: hidden;
 	display:inline-block;
 	float:top;
 }
+
+.valor,
+.valores {
+	text-align: right;
+}

@@ -36,12 +36,15 @@
 <!-- JQuery Date Formatter -->
 <script src="<?= base_url() ?>assets/budget/js/jquery-dateFormat.min.js"></script>
 
+<!-- JQuery Currency Formatter -->
+<script src="<?= base_url() ?>assets/budget/js/autoNumeric.js"></script>
 
 <!-- Script do APP -->
 <script src="<?= base_url() ?>assets/budget/js/account_lists.js"></script>
 
 <!-- Script da pag budgets -->
 <script src="<?= base_url() ?>assets/budget/js/budgets_lists.js"></script>
+
 
 <script>
     $('.dropdown-toggle').dropdown();
@@ -55,6 +58,11 @@
 	});
 	
 	var base_url = <?php echo json_encode(base_url()); ?>;
+
+  	jQuery(function($) {
+      	$('input.valor').autoNumeric('init',{aSep: '', aSign: '', vMin: '-999999999.99'});    
+  	});
+
 </script>
 <!-- Modal -->
 <div id="adicionaConta" class="modal fade">
