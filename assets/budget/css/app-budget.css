@@ -290,6 +290,14 @@ html, body {
     line-height: 1.428571429;
 }
 
+.btn-circle.btn-xs {
+    width: 15px;
+    height: 15px;
+    padding: 0 0;
+    border-radius: 15px;
+    font-size: 8px;
+}
+
 .btn-circle.btn-lg {
     width: 50px;
     height: 50px;
@@ -460,12 +468,19 @@ html, body {
 	top:20px;
 	left: 100%;
 	margin-left:25px;
-	position: absolute;
+	/*position: absolute;*/
 	height: 40px;
 	display: inline-block;
 	text-align: center;
 }
 
+.exibeInformacoes .Divisor {
+	font-family: 'Lato',Arial,'Helvetica Neue',Helvetica,sans-serif;
+	font-size: 18px;
+	font-weight:bold;
+	font-style: italic;
+	color: #eee;
+}
 .exibeInformacoes .Titulo {
 	font-family: 'Lato',Arial,'Helvetica Neue',Helvetica,sans-serif;
 	font-style: italic;
@@ -602,6 +617,19 @@ html, body {
 	border-style: solid;
 	border-width: 0 20px 20px 0;
 	border-color: transparent #ffffff transparent transparent;
+}
+
+#editaCatGrupo .apagar,
+#adicionaCatItem .apagar {
+	font-size:1.4em;
+	float:right;
+	padding:2px;
+	display:none;
+}
+
+#editaCatGrupo.editar .apagar,
+#adicionaCatItem.editar .apagar {
+	display:inline;
 }
 
 .dropCima {
@@ -806,12 +834,41 @@ overflow-y: hidden;
 	background-color: #138b2e;
 }
 
-#tbBudgets a {
+#tbBudgets .linkOculto {
 	display:none;
 }
 
-#tbBudgets tr:hover a {
+#tbBudgets tr:hover .linkOculto {
 	display:inline;
+	text-style: none;
+	text-decoration: none;
+	padding-left:1px;
+}
+
+#tbBudgets a.linkOculto:hover {
+	text-decoration:none;
+}
+
+#tbBudgets a.grupoSumario {
+	color: #000;
+	text-decoration: none;
+}
+
+#tbBudgets a.grupoSumario:hover{
+	text-decoration: none;
+}
+#tbBudgets .grupoSumario:before {
+	font-family: "Glyphicons Halflings";
+    content: "\e252";	
+	font-size: 0.8em;
+	padding-right:1px;
+}
+
+#tbBudgets .grupoSumario.collapsed:before {
+	font-family: "Glyphicons Halflings";
+    content: "\e250";
+	font-size: 0.8em;
+	padding-right:1px;
 }
 
 .mesAno {

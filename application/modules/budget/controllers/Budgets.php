@@ -40,20 +40,34 @@ class Budgets extends Admin_Controller {
 			$mesano_ant = mesAnterior($mesano);
 			
 			
-			$sql1 = "SELECT ReceitaMes FROM `vw_receitas` WHERE profile_uid='" . $this->profile->uniqueid . "' AND mesano='" . $mesano . "'";
+			//$sql1 = "SELECT ReceitaMes FROM `vw_receitas` WHERE profile_uid='" . $this->profile->uniqueid . "' AND mesano='" . $mesano . "'";
+			$sql1 = "SELECT sum(ReceitaMes) AS ReceitaMes FROM `vw_sumaria_receita_budget_gasto` WHERE profile_uid='" . $this->profile->uniqueid . "' AND mesano<='" . $mesano . "'";
 			$query = $this->db->query($sql1);
 			if ($query->num_rows()>0)
-				$data['ReceitaMes'] = $query->row(0)->ReceitaMes;
+				$receitaMes = $query->row(0)->ReceitaMes;
 			else
-				$data['ReceitaMes'] = 0;
+				$receitaMes = 0;
 			
-			$sql1 = "SELECT ReceitaMes FROM `vw_receitas` WHERE profile_uid='" . $this->profile->uniqueid . "' AND mesano='" . $mesano_ant . "'";
+			$sql1 = "SELECT sum(budgets) AS budgetMes, sum(despForaOrc) AS despForaOrc FROM `vw_sumaria_receita_budget_gasto` WHERE profile_uid='" . $this->profile->uniqueid . "' AND mesano<'" . $mesano . "'";
+			$query = $this->db->query($sql1);
+			if ($query->num_rows()>0) {
+				$budgetMes = $query->row(0)->budgetMes;
+				$despForaOrc = $query->row(0)->despForaOrc;
+			}
+			else {
+				$budgetMes = 0;
+				$despForaOrc = 0;
+			}
+			
+			$data['ReceitaMes'] = $receitaMes - $budgetMes;
+			/*$sql1 = "SELECT ReceitaMes FROM `vw_receitas` WHERE profile_uid='" . $this->profile->uniqueid . "' AND mesano='" . $mesano_ant . "'";
 			$query = $this->db->query($sql1);
 			if ($query->num_rows()>0)
 				$receitaAnterior = $query->row(0)->ReceitaMes;
 			else
 				$receitaAnterior = 0;
 			
+			*/
 			$sql1 = "SELECT sum(budgetMes) AS BudgetMes FROM `vw_mes_budget` WHERE profile_uid='" . $this->profile->uniqueid . "' AND mesano='" . $mesano_ant . "'";
 			$query = $this->db->query($sql1);
 			if ($query->num_rows()>0)
@@ -61,7 +75,7 @@ class Budgets extends Admin_Controller {
 			else
 				$budgetAnterior = 0;
 			
-			$data['SaldoMesAnterior'] = $receitaAnterior-$budgetAnterior;
+			//$data['SaldoMesAnterior'] = $receitaAnterior-$budgetAnterior;
 			
 			$budgets_ant = $this->vw_budgets->get_all_bymes($profile_uid,$mesano_ant);
 			$data['sobreGastoMesAnterior'] = array_sum(array_column($budgets_ant,'DespForaOrc'));
@@ -94,16 +108,34 @@ class Budgets extends Admin_Controller {
 		die();
 	}
 	
-	public function adicionaCategoriaItem() {
+	public function editaCategoriaGrupo() {
 		if ($this->input->post('categoria')!='') {
 			$data['nome']=$this->input->post('categoria');
-			$data['catmaster_id']=$this->input->post('categoriagrupo_id');
-			$sql1 = "SELECT max(ordem) as max_ordem FROM `categoriasitens` WHERE catmaster_id='" . $data['catmaster_id'] . "'";
-			$query = $this->db->query($sql1);
-			$data['ordem']=$query->row(0)->max_ordem+1;
-			$data['created'] =  date("Y-m-d H:i:s");
 			$data['modified'] =  date("Y-m-d H:i:s");
-			$this->db->insert('categoriasitens', $data);
+			$this->db->where('id',$this->input->post('categoriagrupo_id'));
+			$this->db->update('categorias', $data); 
+		}
+		header("Location: ".$this->input->post('url'));
+		die();
+	}
+	
+	public function adicionaCategoriaItem() {
+		if ($this->input->post('categoria')!='') {
+			if ($this->input->post('categoriaitem_id')==0) {
+				$data['nome']=$this->input->post('categoria');
+				$data['catmaster_id']=$this->input->post('categoriagrupo_id');
+				$sql1 = "SELECT max(ordem) as max_ordem FROM `categoriasitens` WHERE catmaster_id='" . $data['catmaster_id'] . "'";
+				$query = $this->db->query($sql1);
+				$data['ordem']=$query->row(0)->max_ordem+1;
+				$data['created'] =  date("Y-m-d H:i:s");
+				$data['modified'] =  date("Y-m-d H:i:s");
+				$this->db->insert('categoriasitens', $data);
+			} else {
+				$data['nome']=$this->input->post('categoria');
+				$data['modified'] =  date("Y-m-d H:i:s");
+				$this->db->where('id',$this->input->post('categoriaitem_id'));
+				$this->db->update('categoriasitens', $data); 
+			}
 		}
 		header("Location: ".$this->input->post('url'));
 		die();

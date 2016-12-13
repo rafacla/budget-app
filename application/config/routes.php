@@ -67,14 +67,16 @@ $route['profiles'] = 'budget/profiles';
 $route['profiles/create'] = 'budget/profiles/create';	
 $route['profiles/abreProfile/(:any)'] = 'budget/profiles/abreprofile/$1';
 //criaConta
-$route['(:any)/criaConta'] = 'budget/contas/criaConta/$1';
+$route['criaConta'] = 'budget/contas/criaConta/$1';
 //classe accounts
 $route['(:any)/accounts'] = 'budget/accounts/index/$1';
 $route['editaTransacao'] = 'budget/accounts/editaTransacao';
+$route['editaConciliado'] = 'budget/accounts/editaConciliado';
 $route['importaOFX'] = 'budget/accounts/importaOFX';
 $route['deletaTransacao'] = 'budget/accounts/deletaTransacao';
 $route['(:any)/accounts/(:any)'] = 'budget/accounts/index/$1/$2';
 //budget:
+$route['(:any)/budget/editaCategoriaGrupo'] = 'budget/budgets/editaCategoriaGrupo';
 $route['(:any)/budget/adicionaCategoriaGrupo'] = 'budget/budgets/adicionaCategoriaGrupo';
 $route['(:any)/budget/adicionaCategoriaItem'] = 'budget/budgets/adicionaCategoriaItem';
 $route['alteraBudget'] = 'budget/budgets/alteraBudget';

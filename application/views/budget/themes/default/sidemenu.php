@@ -68,7 +68,6 @@
 							<?php $this->load->view($this->config->item('ci_budget_template_dir_admin') . 'sidemenu_exibeContas'); ?>
                             <hr>
 							<?php if ($this->is_admin): ?>
-                            <li><a href="<?= base_url('budget/user-groups') ?>"><i class="fa fa-edit fa-fw"></i> User Groups</a></li>
                             <li><a href="<?= base_url('budget/users') ?>"><i class="fa fa-edit fa-fw"></i> Users</a></li>
                             <?php endif; ?>
                         

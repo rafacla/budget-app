@@ -10,6 +10,7 @@ class Accounts extends Admin_Controller {
         $this->load->model(array('budget/account'));
 		$this->load->model(array('budget/conta'));
 		$this->load->model(array('budget/vw_categorias'));
+		$this->load->model(array('budget/vw_contas_saldo'));
     }
 
     public function index($profile_uid,$conta_id='') {
@@ -23,21 +24,23 @@ class Accounts extends Admin_Controller {
 			$contas = $this->conta->get_all(array('id','conta_nome'),array('profile_uid'=>$profile_uid));
 			$categorias = $this->vw_categorias->get_all('',array('categoria !=' => NULL,'profile_uid'=>$profile_uid),'','','ordem_grupo, ordem','','profile_uid is NULL');
 			
-			
 			if ($conta_id == '') {
-				$accounts = $this->account->get_all('',array('profile_uid'=>$profile_uid),'','','data,conta_id');
+				$accounts = $this->account->get_all('',array('profile_uid'=>$profile_uid),'','','data_un,valor');
 				$data['contaNome'] = "Todas as contas";
 				$data['contaID'] = 0;
+				$saldos = $this->vw_contas_saldo->get_all('',array('profile_uid'=>$profile_uid));
 			} else {
 				$contaNome = $this->conta->get($conta_id)->conta_nome;
 				$data['contaID'] = $conta_id;
 				
-				$accounts = $this->account->get_all('',array('profile_uid' => $profile_uid,'conta_id'=>$conta_id));
+				$accounts = $this->account->get_all('',array('profile_uid' => $profile_uid,'conta_id'=>$conta_id),'','','data_un,valor');
 				
 				$data['contaNome'] = $contaNome;
+				$saldos = $this->vw_contas_saldo->get_all('',array('profile_uid'=>$profile_uid,'conta_id'=>$conta_id));
 			}
 			
-			$data['saldo'] = array_sum(array_column($accounts,'valor_item'));
+			$data['saldo'] = array_sum(array_column($saldos,'saldo'));
+			$data['saldo_conciliado'] = array_sum(array_column($saldos,'saldo_conciliado'));
 			$data['accounts'] = $accounts;
 			$data['contas'] = $contas;
 			$data['categorias'] = $categorias;
@@ -66,6 +69,13 @@ class Accounts extends Admin_Controller {
             redirect('/budget/accounts', 'refresh');
         }
     }
+	
+	public function editaConciliado() {
+		$data['conciliado'] = $this->input->post('conciliado');
+		$where = "id = " .  $this->input->post('transacaoID');
+		$sql = $this->db->update_string('transacoes', $data, $where);
+		$this->db->query($sql);
+	}
 	
 	public function editaTransacao() {
 		if ($this->input->post('countTr')) {

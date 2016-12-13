@@ -21,7 +21,14 @@
 		<div class="tipDireita">
 			<span><?php echo $contaNome; ?></span>
 		</div>
-		<div class="exibeInformacoes"><span class="Titulo">Saldo:</span><br/><span id="saldoGeral" class="<?=($saldo>=0 ? "SaldoPos" : "SaldoNeg")?>"><?="$".number_format($saldo, 2, '.', '')?></span></div>
+		<?php 
+			$saldo_n_conciliado = $saldo - $saldo_conciliado;
+		?>
+		<div class="exibeInformacoes"><span class="Titulo">Saldo conciliado:</span><br/><span id="saldoGeral" class="<?=($saldo_conciliado>=0 ? "SaldoPos" : "SaldoNeg")?>"><?="$".number_format($saldo_conciliado, 2, '.', '')?></span></div>
+		<div class="exibeInformacoes"><span class="Divisor">+</span></div>
+		<div class="exibeInformacoes"><span class="Titulo">Saldo a haver:</span><br/><span id="saldoGeral" class="<?=($saldo_n_conciliado>=0 ? "SaldoPos" : "SaldoNeg")?>"><?="$".number_format($saldo_n_conciliado, 2, '.', '')?></span></div>
+		<div class="exibeInformacoes"><span class="Divisor">=</span></div>
+		<div class="exibeInformacoes"><span class="Titulo">Saldo total:</span><br/><span id="saldoGeral" class="<?=($saldo>=0 ? "SaldoPos" : "SaldoNeg")?>"><?="$".number_format($saldo, 2, '.', '')?></span></div>
 	</ul>
 </nav>
 
@@ -43,24 +50,24 @@
 			<a data-toggle="modal" href="#importaTransacoes" id="btImport"><i class="fa fa-upload fa-fw"></i>Importar</a>
 		</div>
 	<form id="formTransacoes" method="post">	
-	<table class="table table-hover table-no-bordered tabela" id="tbTransacoes" 
+	<table class="table table-hover table-no-bordered table-condensed table-responsive tabela" id="tbTransacoes" 
 		data-toggle="table"
 		data-search="true"
  	    data-show-refresh="true"
 	    data-show-columns="true"
 		data-click-to-select="false"
-		data-locale="pt-BR"
-		data-sort-name="date">
+		data-locale="pt-BR">
 			<thead>
 				<tr><th id="thckAll"><input type="checkbox" id="ckbAll" data-indice="todas"></th>
-					<th data-sortable="true" class="col-md-2" data-filed="conta">Conta</th>
-					<th data-sortable="true" class="col-md-2" data-field="date" data-sort-name="_date_data" data-sorter="monthSorter">Data</th>
-					<th data-sortable="true" class="col-md-4" data-field="sacado">Sacado</th>
-					<th data-sortable="true" class="col-md-4" data-field="categoria">Categoria</th>
-					<th data-sortable="true" class="col-md-4" data-field="memo">Memo</th>
-					<th data-sortable="true" class="col-md-2" data-field="saida">Saída</th>
-					<th data-sortable="true" class="col-md-2" data-field="entrada">Entrada</th>
-					<th data-sortable="true" class="col-md-2" data-field="saldo">Saldo</th>
+					<th data-sortable="false" class="col-xs-2" data-filed="conta">Conta</th>
+					<th data-sortable="false" class="col-xs-1" data-field="date" data-sort-name="_date_data" data-sorter="monthSorter">Data</th>
+					<th data-sortable="false" class="col-xs-2" data-field="sacado">Sacado</th>
+					<th data-sortable="false" class="col-xs-3" data-field="categoria">Categoria</th>
+					<th data-sortable="false" class="col-xs-1" data-field="memo">Memo</th>
+					<th data-sortable="false" class="col-xs-1 valores" data-field="saida">Saída</th>
+					<th data-sortable="false" class="col-xs-1 valores" data-field="entrada">Entrada</th>
+					<th data-sortable="false" class="col-xs-1 valores" data-field="saldo">Saldo</th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -98,6 +105,7 @@
 										$saldo['geral'] = $saldo['geral'] + $list['valor'];
 										echo number_format($saldo['geral'],2,'.','');
 									?></td>	
+								<td><button id="btConciliar" data-conciliado="<?=($list['conciliado']==1) ? "1" : "0" ?>" data-tid="<?=$list['transacao_id']?>" type="button" class="btn <?=($list['conciliado']==1) ? "btn-success" : "btn-secondary" ?> btn-circle btn-xs">C</button></td>
 							</tr>
 						<?php endif; ?>
 						<?php $tID = $list['transacao_id']; $contaID = $list['conta_id'];?>
