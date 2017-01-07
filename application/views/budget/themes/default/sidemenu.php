@@ -26,6 +26,7 @@
         <!-- Custom Fonts -->
         <link href="<?= base_url() ?>assets/admin/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 		<link href="<?= base_url() ?>assets/budget/css/select2.min.css" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
 
 		<!-- Bootstrap Tables -->
 		<link href="<?= base_url() ?>assets/budget/css/bootstrap-table.min.css" rel="stylesheet">

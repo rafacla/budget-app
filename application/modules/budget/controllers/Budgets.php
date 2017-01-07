@@ -108,6 +108,15 @@ class Budgets extends Admin_Controller {
 		die();
 	}
 	
+	public function listaGastos() {
+		if ($this->input->post('categoriaitem_id')!='' && $this->input->post('mesano')!='') {
+			$mesano = substr($this->input->post('mesano'),0,4)."-".substr($this->input->post('mesano'),-2);
+			$sql1 = "SELECT DISTINCT transacao_id, data, sacado_nome, valor FROM `vw_accounts` WHERE catitem_id IN (" . $this->input->post('categoriaitem_id') . ") AND LEFT(data_un,7) ='".$mesano."'";
+			$query = $this->db->query($sql1);
+			echo json_encode($query->result_array());
+		}	
+	}
+	
 	public function editaCategoriaGrupo() {
 		if ($this->input->post('categoria')!='') {
 			$data['nome']=$this->input->post('categoria');

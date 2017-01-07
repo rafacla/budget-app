@@ -91,7 +91,7 @@
 							</tr>
 						<?php endif; ?>
 						<?php if ($list['categoriaitem']!=""): ?>
-						<tr class="filha collapse in f<?=$list['categoria_grupo_id']?>" data-parent="<?=$list['categoria_grupo']?>">
+						<tr class="filha collapse in f<?=$list['categoria_grupo_id']?>" data-parent="<?=$list['categoria_grupo']?>" data-catid="<?=$list['categoriaitem_id']?>">
 							<td id="thckAll" data-checkbox="true"></td>
 							<td class="categoria"><?=$list['categoriaitem']?><a href="#"><span id="cat_edit" data-valor="<?=$list['categoriaitem']?>" data-catid="<?=$list['categoriaitem_id']?>" data-grupo-id="<?=$list['categoria_grupo_id']?>" class="glyphicon glyphicon-pencil linkOculto"></span></a></td>
 							<td class="orcado"><input type="text" class="valor" name="orcado" id="orcado" data-budgetID="<?=$list['categoriaitem_id']?>" value="<?=($list['budgetMes']=="") ? 0 : $list['budgetMes'] ?>"></td>
@@ -111,7 +111,7 @@
 			</form>
 		</div>	
 		<div class="budgetMenuDireito">
-			<div class="panel panel-default">
+			<div id="panelResumo" class="panel panel-default" style="margin:0;">
 			  <div class="panel-heading">Resumo para o mês</div>
 			  <div class="panel-body">
 				<strong>Perfil de gastos do mês:</strong>
@@ -171,6 +171,19 @@
 					<div class="descricao"><?=(($gastosMes*(-1))>$budgetMes) ? "Sobregastos:" : "Gastos:"?>
 					</div>
 					<div class="valor"><?=number_format($gastosMes*(-1), 2, '.', '')?>
+					</div>
+				</div>
+			  </div>
+			</div>
+			<div id="panelGastos" class="panel panel-default">
+			  <div class="panel-heading">Gastos na categoria</div>
+			  <div class="panel-body">
+				<div id="listaGastos">
+					<div id="semGastos">
+						<span id="emoticon">=)</span><br/>
+						<span>Selecione uma categoria!</span>
+					</div>
+					<div id="resultados">
 					</div>
 				</div>
 			  </div>

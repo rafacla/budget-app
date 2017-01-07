@@ -681,7 +681,7 @@ html, body {
 }
 
 .fixed-table-container {
-	height: calc(100vh - 125px)!important;
+	height: calc(100vh - 100px)!important;
 }
 
 #tbTransacoes tr td {
@@ -929,6 +929,48 @@ overflow-y: hidden;
 	background-color: #e5f5f9;
 }
 
+.budgetMenuDireito #panelResumo {
+	height: 230px;
+}
+
+.budgetMenuDireito #panelGastos {
+	height: calc(100vh - 67px - 30px - 230px);
+}
+
+#panelGastos #resultados {
+	width: calc(100% + 30px);
+	margin:-15px;
+}
+
+.budgetMenuDireito #panelGastos #resultados td {
+	padding: 3px;
+	border-style: solid;
+	border-width: 1px 0 1px 0;
+	border-color:#ddd;
+	font-size:0.9em;
+}
+
+.budgetMenuDireito #panelGastos #resultados th {
+	background-color: #fafafa;
+	padding: 3px;
+	font-size:0.8em;
+}
+
+.budgetMenuDireito #panelGastos #semGastos {
+	color:#555;
+	text-align:center;
+	padding:20px;
+}
+.budgetMenuDireito #panelGastos #emoticon {
+	font-family: 'Lato',Arial,'Helvetica Neue',Helvetica,sans-serif;
+	font-size: 3.6em;
+	-webkit-transform: rotate(0deg);
+	-moz-transform: rotate(0deg);
+	-o-transform: rotate(0deg);
+	writing-mode: tb-rl;
+}
+
+
 #adicionaCatItem {
   position: absolute;
   display:none;
@@ -947,10 +989,6 @@ overflow-y: hidden;
 	border:1px solid #009cc2!important;
 	border-radius:15px!important;
 	background-color: #fff;
-}
-
-.legendaBudget {
-	
 }
 
 .legendaBudget .barra {

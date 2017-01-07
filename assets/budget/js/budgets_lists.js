@@ -1,6 +1,6 @@
 var oldBudget;
-
-
+var request;
+var gastos = new Array();
 
 $(function() {
 	calculaSumarias();
@@ -59,6 +59,18 @@ $(function() {
 			$('#adicionaCatItem #label').text('Editar categoria:');
 			$('#adicionaCatItem #apagarCategoria').attr('href',base_url+'deletaCategoria/'+$(e.target).attr('data-catid'));
 			$('#adicionaCatItem #novaCategoria').focus();
+		} else if ($(e.target).is('td')) {
+			if (e.ctrlKey) {
+				$(e.target).closest('tr').addClass('selected');
+				$(e.target).closest('tr').find(':checkbox').prop('checked', true);
+				listaGastos();
+			} else {
+				$(':checkbox').prop('checked', false);
+				$('tr.selected').removeClass('selected');
+				$(e.target).closest('tr').addClass('selected');
+				$(e.target).closest('tr').find(':checkbox').prop('checked', true);
+				listaGastos();
+			}
 		} else {
 			$adicionaCatItem.hide();
 		}
@@ -72,6 +84,11 @@ $(function() {
 		}
 	});
 	
+	$(':checkbox').on('change',function(e) {
+		//console.log(e.target);
+		listaGastos();
+	});
+	
 	$('.orcado').on('keydown',function(e) {
 		var code = e.keyCode || e.which;
 		if(code == 27) { //ESC
@@ -83,10 +100,10 @@ $(function() {
 				dII = $(e.target).closest('tr').attr('data-index')-2;
 				if ($('#tbBudgets').find("[data-index='"+dI+"']").hasClass('filha')) {
 					$('#tbBudgets').find("[data-index='"+dI+"']").find('#orcado').focus();
-					$('#tbBudgets').find("[data-index='"+dI+"']").find('#orcado').select();
+					//$('#tbBudgets').find("[data-index='"+dI+"']").find('#orcado').select();
 				} else if ($('#tbBudgets').find("[data-index='"+dII+"']").hasClass('filha')) {
 					$('#tbBudgets').find("[data-index='"+dII+"']").find('#orcado').focus();
-					$('#tbBudgets').find("[data-index='"+dII+"']").find('#orcado').select();
+					//$('#tbBudgets').find("[data-index='"+dII+"']").find('#orcado').select();
 				}				
 			}
 		} else if (code==40) { // down
@@ -94,10 +111,10 @@ $(function() {
 			dII = +$(e.target).closest('tr').attr('data-index')+2;
 			if ($('#tbBudgets').find("[data-index='"+dI+"']").hasClass('filha')) {
 				$('#tbBudgets').find("[data-index='"+dI+"']").find('#orcado').focus();
-				$('#tbBudgets').find("[data-index='"+dI+"']").find('#orcado').select();
+				//$('#tbBudgets').find("[data-index='"+dI+"']").find('#orcado').select();
 			} else if ($('#tbBudgets').find("[data-index='"+dII+"']").hasClass('filha')) {
 				$('#tbBudgets').find("[data-index='"+dII+"']").find('#orcado').focus();
-				$('#tbBudgets').find("[data-index='"+dII+"']").find('#orcado').select();
+				//$('#tbBudgets').find("[data-index='"+dII+"']").find('#orcado').select();
 			}				
 		} else if (code==13) { //enter
 			$(e.target).focusout();
@@ -136,11 +153,8 @@ $(function() {
 					budget_valor: $(e.target).val(),
 					mesano: $('#mesano').val() 
 				});
-			//	.done(function(msg){ console.log(msg); })
-			//	.fail(function(xhr, status, error) {
-			//		console.log(error);
-			//		console.log(xhr);
-			//	});
+			//	.done(function(msg){  })
+			//	.fail(function(xhr, status, error) {	});
 			
 			$('tr.orcado .valor').text(parseFloat((Dif*1)+parseFloat($('tr.orcado .valor').text()).toFixed(2)*1).toFixed(2));
 			$('.valorBudget .valor').text((parseFloat($('.receitas .valor').text())-parseFloat($('tr.orcado .valor').text())-parseFloat($('.excedente .valor').text())).toFixed(2));
@@ -244,3 +258,63 @@ function calculaSumarias() {
 		$(this).find('.disponivel').text(sum.toFixed(2));
 	});
 }
+
+function listaGastos() {
+	var strIds = '';
+	$('#tbBudgets .filha.selected').each(function() {
+		if (strIds.length) {
+			strIds += ',';
+		}
+		strIds += $(this).attr('data-catid');
+	});
+	var mesAno = $('#mesano').val();
+	
+	if (request) {
+        request.abort();
+    }
+	
+	if (strIds.length) {
+		$('#semGastos').hide();
+		$('#resultados').show();
+		
+		// Fire off the request to /form.php
+		request = $.ajax({
+			url: base_url+"listaGastos",
+			type: "post",
+			data: {mesano: mesAno, categoriaitem_id: strIds}
+		});
+
+		// Callback handler that will be called on success
+		request.done(function (response, textStatus, jqXHR){
+			gastos = JSON.parse(response);
+			var inserehtml = '';
+			inserehtml = `
+				<table style="width:100%">
+					<thead>
+						<tr>
+							<th style="width:25%">Data</th>
+							<th style="width:50%">Sacado</th>
+							<th style="width:25%">Valor</th>
+						</tr>
+					</thead>
+					<tbody>`;
+			$.each(gastos, function(index, value) {
+				inserehtml += `
+						<tr>
+							<td>`+value.data.substr(0,5)+`</td>
+							<td>`+value.sacado_nome+`</td>
+							<td>`+value.valor+`</td>
+						</tr>`;
+			});
+			inserehtml += `
+					</tbody>
+				</table>`;
+			
+			$('#listaGastos #resultados').html(inserehtml);
+		});
+	} else {
+		$('#semGastos').show();
+		$('#resultados').hide();
+	}
+}
+	

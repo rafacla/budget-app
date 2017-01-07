@@ -82,7 +82,7 @@ $route['(:any)/budget/adicionaCategoriaItem'] = 'budget/budgets/adicionaCategori
 $route['alteraBudget'] = 'budget/budgets/alteraBudget';
 $route['(:any)/budget'] = 'budget/budgets/index/$1';
 $route['(:any)/budget/(:any)'] = 'budget/budgets/index/$1/$2';
-
+$route['listaGastos'] = 'budget/budgets/listaGastos';
 /*
 $route['budget'] = 'budget/admin';
 $route['budget/dashboard'] = 'budget/admin';
