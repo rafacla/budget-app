@@ -116,8 +116,8 @@ class NewUsers extends MY_Controller {
 			
 			// set any errors and display the form
 			$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
-			$this->data['page'] = "themes/default/users_create.php";
-        
+			$this->data['page'] = "themes/default/login_form.php";
+			
 			$this->load->view($this->_container, $this->data);
 			//$this->_render_page('auth/forgot_password', $this->data);
 		}
@@ -141,7 +141,12 @@ class NewUsers extends MY_Controller {
 			{
 				// if there were no errors
 				$this->session->set_flashdata('message', $this->ion_auth->messages());
-				redirect("/", 'refresh'); //we should display a confirmation page here instead of the login page
+				$this->data['message'] = "E-mail enviado com sucesso!";
+				
+				$this->session->flashdata('message');
+				$this->data['page'] = "themes/default/login_form.php";
+				
+				$this->load->view($this->_container, $this->data);
 			}
 			else
 			{

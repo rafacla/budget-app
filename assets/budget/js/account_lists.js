@@ -9,7 +9,18 @@ var resposta;
 $(function() {	
 	$(document).on('click', '#tbTransacoes tr', function(event) {
 	//$('#tbTransacoes').find('tr').click( function(){
-		if ($(this).hasClass('selected') && event.target.type !== 'checkbox') {
+		if($(event.target).is('#btConciliar')) {
+			if ($(event.target).attr('data-conciliado')==1) {
+				$(event.target).removeClass('btn-success');
+				$(event.target).addClass('btn-secondary');
+				$(event.target).attr('data-conciliado',0);
+			} else {
+				$(event.target).addClass('btn-success');
+				$(event.target).removeClass('btn-secondary');
+				$(event.target).attr('data-conciliado',1);
+			}
+			editaConciliado($(event.target).attr('data-tid'),$(event.target).attr('data-conciliado'));
+		} else if ($(this).hasClass('selected') && event.target.type !== 'checkbox') {
 			if (!$('#tbTransacoes .editaTransacao').length) {
 				if ($(this).attr('data-editavel')==1) {
 					adicionaEdicao($(this).attr('id'));
@@ -208,9 +219,9 @@ function adicionaTransacao() {
 					<td id="col_sacado_nome"></td>
 					<td id="col_categoria"></td>
 					<td id="col_memo"></td>
-					<td id="col_saida"></td>
-					<td id="col_entrada"></td>
-					<td id="col_saldo"></td>	
+					<td id="col_saida" class="valores"></td>
+					<td id="col_entrada" class="valores"></td>
+					<td id="col_saldo" class="valores"></td>	
 				</tr>`;
 		htmEditavel = `<tbody id="edita_r`+rID+`">
 				<tr class="editaTransacao selected" id="main1" data-parent="`+rID+`">
@@ -220,8 +231,8 @@ function adicionaTransacao() {
 					<td><input type="text" placeholder="Sacado" data-trid="" id="sacado" name="sacado" value="" class="form-control form-inline transacao input-sm"/></td>
 					<td id="cat"></td>
 					<td><input type="text" placeholder="Memo"  data-trid="" id="memo" name="memo" value="" class="form-control form-inline transacao input-sm"/></td>
-					<td><input type="text" name="totalSaida" placeholder="Saída" id="totalSaida" value="" class="form-control form-inline transacao input-sm"/></td>
-					<td><input type="text" name="totalEntrada" placeholder="Entrada" id="totalEntrada" value="" class="form-control form-inline transacao input-sm"/></td>
+					<td><input type="text" name="totalSaida" placeholder="Saída" id="totalSaida" value="" class="form-control form-inline transacao input-sm valor"/></td>
+					<td><input type="text" name="totalEntrada" placeholder="Entrada" id="totalEntrada" value="" class="form-control form-inline transacao input-sm valor"/></td>
 					<td><input type="text" name="split" id="split" value="false" style="display:none"></td>
 				</tr>
 				<tr class="editaTransacao selected">
@@ -321,8 +332,8 @@ function adicionaSubtransacao() {
 			<td><div id="conta_nome" class="input-group-btn"><input type="text" placeholder="Transferir para:" data-trid="`+proxNrID+`" id="transferir_`+proxNrID+`" name="transferir_`+proxNrID+`>" data-intTr="`+proxNrID+`" value="" class="form-control form-inline transacao input-sm typeahead transferir_para"/></div></td>
 			<td id="cat`+proxNrID+`"></td>
 			<td><input type="text" placeholder="Memo"  data-trid="`+proxNrID+`" id="memo_`+proxNrID+`" name="memo_`+proxNrID+`" val()="`+$('#memo').val()+`" class="form-control form-inline transacao input-sm" disabled/></td>
-			<td><input type="text" placeholder="Saída" data-trid="`+proxNrID+`"  id="saida_`+proxNrID+`" name="saida_`+proxNrID+`" val()="" class="form-control form-inline transacao input-sm"/></td>
-			<td><input type="text" placeholder="Entrada" data-trid="`+proxNrID+`"  id="entrada_`+proxNrID+`" name="entrada_`+proxNrID+`" val()="" class="form-control form-inline transacao input-sm"/></td>
+			<td><input type="text" placeholder="Saída" data-trid="`+proxNrID+`"  id="saida_`+proxNrID+`" name="saida_`+proxNrID+`" val()="" class="form-control form-inline transacao input-sm valor"/></td>
+			<td><input type="text" placeholder="Entrada" data-trid="`+proxNrID+`"  id="entrada_`+proxNrID+`" name="entrada_`+proxNrID+`" val()="" class="form-control form-inline transacao input-sm valor"/></td>
 			<td></td>
 		</tr>
 	`;
@@ -403,8 +414,43 @@ function removeSelect2() {
 	}
 }
 
+function editaConciliado(tid,conciliado) {
+	// Abort any pending request
+    if (request) {
+        request.abort();
+    }
+	
+	// Fire off the request to /form.php
+	request = $.ajax({
+        url: base_url+"editaConciliado",
+        type: "post",
+        data: {conciliado: conciliado, transacaoID: tid}
+    });
+
+    // Callback handler that will be called on success
+    request.done(function (response, textStatus, jqXHR){
+		
+    });
+
+    // Callback handler that will be called on failure
+    request.fail(function (jqXHR, textStatus, errorThrown){
+        // Log the error to the console
+        console.error(
+            "The following error occurred: "+
+            textStatus, errorThrown, jqXHR.responseText
+        );
+    });
+
+    // Callback handler that will be called regardless
+    // if the request failed or succeeded
+    request.always(function () {
+    });
+	calculaSaldoGlobal();
+}
+
 function salvaTransacao() {
 	//NAO PERMITE SALVAR SE A TRANSAÇÃO TIVER DESABALANCEADA:
+	calculaDiferenca();
 	if (+$('#faltandoEntrada').text()!=0 || +$('#faltandoSaida').text()!=0) {
 		alert('Os subitens da sua transação não coincidem com os valores da sua transação.\n\nCorrija os valores usando a linha Faltando distribuir!');
 		return -1;
@@ -430,14 +476,18 @@ function salvaTransacao() {
     $inputs.prop("disabled", true);
 	
 	//Atualiza os campos:
-	var Indice = $('#tbTransacoes #main1').attr('data-parent');
 	if ($('#rNew').length) {
+		var newIndice = $('#rNew').attr('data-index');	
 		$('#rNew').attr('id','r'+newIndice);
+		$('#tbTransacoes #main1').attr('data-parent',newIndice);
 		$('#edita_rNew #main1').attr('data-parent',newIndice);
 		$('#edita_rNew').attr('id','edita_r'+newIndice);
 	}
-    // Fire off the request to /form.php
+	
+    var Indice = $('#tbTransacoes #main1').attr('data-parent');
+	// Fire off the request to /form.php
 	request = $.ajax({
+		
         url: base_url+"editaTransacao",
         type: "post",
         data: serializedData
@@ -499,7 +549,7 @@ function salvaTransacao() {
 	$('#edita_r'+Indice).children().replaceWith();
 	$('#edita_r'+Indice).append($('#tbTransacoes .editaTransacao').clone());
 	
-	cancelaEdicao(true);
+	cancelaEdicao(false);
 	
 	calculaSaldoGlobal();
 }
@@ -723,6 +773,7 @@ function calculaSaldoGlobal() {
 	$(document).find('[id^=menu_saldo_]').each(function () {
 			var nomeConta = $(this).attr('id');
 			nomeConta = nomeConta.substr(11,nomeConta.length-11);
-			$(this).text(parseFloat(+sumEntradaConta[nomeConta]-sumSaidaConta[nomeConta]).toFixed(2));
+			if ($.isNumeric(sumEntradaConta[nomeConta]))
+				$(this).text(parseFloat(+sumEntradaConta[nomeConta]-sumSaidaConta[nomeConta]).toFixed(2));
 	});
 }

@@ -26,6 +26,7 @@
         <!-- Custom Fonts -->
         <link href="<?= base_url() ?>assets/admin/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 		<link href="<?= base_url() ?>assets/budget/css/select2.min.css" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
 
 		<!-- Bootstrap Tables -->
 		<link href="<?= base_url() ?>assets/budget/css/bootstrap-table.min.css" rel="stylesheet">
@@ -68,7 +69,6 @@
 							<?php $this->load->view($this->config->item('ci_budget_template_dir_admin') . 'sidemenu_exibeContas'); ?>
                             <hr>
 							<?php if ($this->is_admin): ?>
-                            <li><a href="<?= base_url('budget/user-groups') ?>"><i class="fa fa-edit fa-fw"></i> User Groups</a></li>
                             <li><a href="<?= base_url('budget/users') ?>"><i class="fa fa-edit fa-fw"></i> Users</a></li>
                             <?php endif; ?>
                         

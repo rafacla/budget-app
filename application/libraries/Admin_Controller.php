@@ -24,7 +24,7 @@ class Admin_Controller extends MY_Controller {
 		
 		
 		if ($this->session->has_userdata('profile_uid') && $this->session->profile_uid !== '' && is_string($this->session->profile_uid )) {
-			$this->aContas = $this->vw_contas_saldo->get_all('',array('profile_uid'=>$this->session->profile_uid));
+			$this->aContas = $this->vw_contas_saldo->get_all('',array('profile_uid'=>$this->session->profile_uid),'','','conta_nome');
 		} else {
 			redirect('/profiles', 'refresh');
 		}

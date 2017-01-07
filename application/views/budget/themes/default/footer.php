@@ -72,7 +72,7 @@
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h4 class="modal-title">Adicionar nova conta...</h4>
 		</div>
-		<form action="criaConta" method="post" enctype="multipart/form-data">
+		<form action="/criaConta" method="post" enctype="multipart/form-data">
 			<div id="criaConta" class="modal-body">
 				<strong>Nome da conta:</strong>
 				<input type="text" name="conta_nome" class="form-control" placeholder="Nome da Conta">

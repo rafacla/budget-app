@@ -80,17 +80,20 @@
 						<?php if ($grupo!=$list['categoria_grupo']): ($grupo=$list['categoria_grupo'])?>
 							<tr class="sumaria" id="<?=$list['categoria_grupo']?>">
 								<td id="thckAll" data-checkbox="true"></td>
-								<td class="categoria"><span class="glyphicon glyphicon-triangle-bottom"></span> 
-								<?=$list['categoria_grupo']?> <a href="#"><span id="cat_grupo_id" data-grupo-id="<?=$list['categoria_grupo_id']?>" class="glyphicon glyphicon-plus-sign"></span></a></td>
+								<td class="categoria">
+									<a href="#" data-target=".f<?=$list['categoria_grupo_id']?>" data-toggle="collapse" class="grupoSumario"><?=$list['categoria_grupo']?></a>
+									<a href="#"><span id="cat_grupo_id" data-grupo-id="<?=$list['categoria_grupo_id']?>" class="glyphicon glyphicon-plus-sign linkOculto"></span></a>
+									<a href="#"><span id="cat_grupo_edit" data-valor="<?=$list['categoria_grupo']?>" data-grupo-id="<?=$list['categoria_grupo_id']?>" class="glyphicon glyphicon-pencil linkOculto"></span></a>
+								</td>
 								<td class="orcado"></td>
 								<td class="gasto"></td>
 								<td class="disponivel"></td>
 							</tr>
 						<?php endif; ?>
 						<?php if ($list['categoriaitem']!=""): ?>
-						<tr class="filha" data-parent="<?=$list['categoria_grupo']?>">
+						<tr class="filha collapse in f<?=$list['categoria_grupo_id']?>" data-parent="<?=$list['categoria_grupo']?>" data-catid="<?=$list['categoriaitem_id']?>">
 							<td id="thckAll" data-checkbox="true"></td>
-							<td class="categoria"><?=$list['categoriaitem']?></td>
+							<td class="categoria"><?=$list['categoriaitem']?><a href="#"><span id="cat_edit" data-valor="<?=$list['categoriaitem']?>" data-catid="<?=$list['categoriaitem_id']?>" data-grupo-id="<?=$list['categoria_grupo_id']?>" class="glyphicon glyphicon-pencil linkOculto"></span></a></td>
 							<td class="orcado"><input type="text" class="valor" name="orcado" id="orcado" data-budgetID="<?=$list['categoriaitem_id']?>" value="<?=($list['budgetMes']=="") ? 0 : $list['budgetMes'] ?>"></td>
 							<td class="gasto"><?=number_format(($list['gastoMes']=="" ? 0 : -$list['gastoMes']), 2, '.', ''); ?></td>
 							<?php
@@ -108,7 +111,7 @@
 			</form>
 		</div>	
 		<div class="budgetMenuDireito">
-			<div class="panel panel-default">
+			<div id="panelResumo" class="panel panel-default" style="margin:0;">
 			  <div class="panel-heading">Resumo para o mês</div>
 			  <div class="panel-body">
 				<strong>Perfil de gastos do mês:</strong>
@@ -172,6 +175,19 @@
 				</div>
 			  </div>
 			</div>
+			<div id="panelGastos" class="panel panel-default">
+			  <div class="panel-heading">Gastos na categoria</div>
+			  <div class="panel-body">
+				<div id="listaGastos">
+					<div id="semGastos">
+						<span id="emoticon">=)</span><br/>
+						<span>Selecione uma categoria!</span>
+					</div>
+					<div id="resultados">
+					</div>
+				</div>
+			  </div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -179,13 +195,32 @@
 <div id="adicionaCatItem" class="dropdown clearfix pontaEsquerda">
 	<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;">
 		<form action="<?=base_url() . "/" . $profile_uid ."/budget/adicionaCategoriaItem"?>" method="post">
-			<li><input type="text" id="novaCategoria" name="categoria" placeholder="Nova Categoria" class="form-control">
+			<li><strong id="label">Adicionar item a categoria:</strong></li>
+			<li><input type="text" id="novaCategoria" name="categoria" placeholder="Nome da Categoria" class="form-control">
+			<input type="text" style="display:none" name="url" value="<?=base_url() . $profile_uid ."/budget/".$mesano?>"></li>
+			<input type="text" style="display:none" id="categoriagrupo_id" name="categoriagrupo_id" class="form-control" value="0">
+			<input type="text" style="display:none" id="categoriaitem_id" name="categoriaitem_id" class="form-control" value="0">
+			<li role="separator" class="divider"></li>
+			<li><button class="btn btn-primary" aria-label="Criar categoria" type="submit">
+				  <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Salvar
+				</button>
+				<a href="#" class="apagar" id="apagarCategoria"><span class="glyphicon glyphicon-trash"></span></a>
+			</li>
+		</form>
+	</ul>
+</div>
+<div id="editaCatGrupo" class="dropdown clearfix pontaEsquerda">
+	<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;">
+		<form action="<?=base_url() . "/" . $profile_uid ."/budget/editaCategoriaGrupo"?>" method="post">
+			<li><strong id="label">Editar o grupo:</strong></li>
+			<li><input type="text" id="categoria" name="categoria" placeholder="Nome da Categoria" class="form-control">
 			<input type="text" style="display:none" name="url" value="<?=base_url() . $profile_uid ."/budget/".$mesano?>"></li>
 			<input type="text" style="display:none" id="categoriagrupo_id" name="categoriagrupo_id" class="form-control" value="0">
 			<li role="separator" class="divider"></li>
 			<li><button class="btn btn-primary" aria-label="Criar categoria" type="submit">
 				  <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Salvar
 				</button>
+				<a href="#" class="apagar" id="apagarCategoria"><span class="glyphicon glyphicon-trash"></span></a>
 			</li>
 		</form>
 	</ul>
