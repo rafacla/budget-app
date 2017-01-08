@@ -57,7 +57,7 @@ $(function() {
 		maxSize: 1,
 		extensions: ["ofx"],
 		uploadFile: {
-			url: '/enviaArquivo/index.php',
+			url: '/importOFX/index.php',
 			data: null,
             type: 'POST',
             enctype: 'multipart/form-data',
