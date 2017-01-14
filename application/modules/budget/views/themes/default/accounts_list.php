@@ -52,18 +52,19 @@
 	<form id="formTransacoes" method="post">	
 	<table class="table table-hover table-no-bordered table-condensed table-responsive tabela" id="tbTransacoes" 
 		data-toggle="table"
+		data-show-export="true"
 		data-search="true"
  	    data-show-refresh="true"
-	    data-show-columns="true"
+	    data-show-columns="false"
 		data-click-to-select="false"
 		data-locale="pt-BR"
 		data-height="100%">
 			<thead>
 				<tr><th id="thckAll"><input type="checkbox" id="ckbAll" data-indice="todas"></th>
-					<th data-sortable="false" class="col-xs-2" data-filed="conta">Conta</th>
+					<th data-sortable="false" class="col-xs-1" data-filed="conta">Conta</th>
 					<th data-sortable="false" class="col-xs-1" data-field="date" data-sort-name="_date_data" data-sorter="monthSorter">Data</th>
-					<th data-sortable="false" class="col-xs-2" data-field="sacado">Sacado</th>
-					<th data-sortable="false" class="col-xs-3" data-field="categoria">Categoria</th>
+					<th data-sortable="false" class="col-xs-4" data-field="sacado">Sacado</th>
+					<th data-sortable="false" class="col-xs-2" data-field="categoria">Categoria</th>
 					<th data-sortable="false" class="col-xs-1" data-field="memo">Memo</th>
 					<th data-sortable="false" class="col-xs-1 valores" data-field="saida">Saída</th>
 					<th data-sortable="false" class="col-xs-1 valores" data-field="entrada">Entrada</th>

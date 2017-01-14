@@ -197,6 +197,7 @@ function deletarTransacoesSelecionadas() {
 		$(this).remove();
 		$.post(base_url+"deletaTransacao", { trid: trid });
 	});
+	calculaSaldoGlobal();
 }
 
 
