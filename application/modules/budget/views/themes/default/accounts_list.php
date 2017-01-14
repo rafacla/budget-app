@@ -24,11 +24,11 @@
 		<?php 
 			$saldo_n_conciliado = $saldo - $saldo_conciliado;
 		?>
-		<div class="exibeInformacoes"><span class="Titulo">Saldo conciliado:</span><br/><span id="saldoGeral" class="<?=($saldo_conciliado>=0 ? "SaldoPos" : "SaldoNeg")?>"><?="$".number_format($saldo_conciliado, 2, '.', '')?></span></div>
+		<div class="exibeInformacoes"><span class="Titulo">Saldo conciliado:</span><br/><span id="saldoConciliado" class="<?=($saldo_conciliado>=0 ? "SaldoPos" : "SaldoNeg")?>"><?=($saldo_conciliado>=0 ? "$" : "-$")?><?=number_format(abs($saldo_conciliado), 2, '.', ',')?></span></div>
 		<div class="exibeInformacoes"><span class="Divisor">+</span></div>
-		<div class="exibeInformacoes"><span class="Titulo">Saldo a haver:</span><br/><span id="saldoGeral" class="<?=($saldo_n_conciliado>=0 ? "SaldoPos" : "SaldoNeg")?>"><?="$".number_format($saldo_n_conciliado, 2, '.', '')?></span></div>
+		<div class="exibeInformacoes"><span class="Titulo">Saldo a haver:</span><br/><span id="saldoNConciliado" class="<?=($saldo_n_conciliado>=0 ? "SaldoPos" : "SaldoNeg")?>"><?=($saldo_n_conciliado>=0 ? "$" : "-$")?><?=number_format(abs($saldo_n_conciliado), 2, '.', ',')?></span></div>
 		<div class="exibeInformacoes"><span class="Divisor">=</span></div>
-		<div class="exibeInformacoes"><span class="Titulo">Saldo total:</span><br/><span id="saldoGeral" class="<?=($saldo>=0 ? "SaldoPos" : "SaldoNeg")?>"><?="$".number_format($saldo, 2, '.', '')?></span></div>
+		<div class="exibeInformacoes"><span class="Titulo">Saldo total:</span><br/><span id="saldoGeral" class="<?=($saldo>=0 ? "SaldoPos" : "SaldoNeg")?>"><?=($saldo>=0 ? "$" : "-$")?><?=number_format(abs($saldo), 2, '.', ',')?></span></div>
 	</ul>
 </nav>
 

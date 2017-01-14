@@ -6,6 +6,18 @@ var curDate = new Date();
 var newID='';
 
 var resposta;
+
+Number.prototype.formatMoney = function(c, d, t){
+var n = this, 
+    c = isNaN(c = Math.abs(c)) ? 2 : c, 
+    d = d == undefined ? "." : d, 
+    t = t == undefined ? "," : t, 
+    s = n < 0 ? "-$" : "$", 
+    i = String(parseInt(n = Math.abs(Number(n) || 0).toFixed(c))), 
+    j = (j = i.length) > 3 ? j % 3 : 0;
+   return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+ };
+ 
 $(function() {	
 	$(document).on('click', '#tbTransacoes tr', function(event) {
 	//$('#tbTransacoes').find('tr').click( function(){
@@ -14,10 +26,12 @@ $(function() {
 				$(event.target).removeClass('btn-success');
 				$(event.target).addClass('btn-secondary');
 				$(event.target).attr('data-conciliado',0);
+				calculaSaldoGlobal();
 			} else {
 				$(event.target).addClass('btn-success');
 				$(event.target).removeClass('btn-secondary');
 				$(event.target).attr('data-conciliado',1);
+				calculaSaldoGlobal();
 			}
 			editaConciliado($(event.target).attr('data-tid'),$(event.target).attr('data-conciliado'));
 		} else if ($(this).hasClass('selected') && event.target.type !== 'checkbox') {
@@ -748,22 +762,40 @@ function calculaSaldoGlobal() {
 	var sumSaidaConta = {};
 	var sumEntradaConta = {};
 	var sumSaida = 0;
+	var sumSaidaC = 0;
+	var sumSaidaNC = 0;
+	var sumEntrada = 0;
+	var sumEntradaC = 0;
+	var sumEntradaNC = 0;
 	$('#tbTransacoes #col_saida').each(function () {
         sumSaida += 1*($(this).text());
+		if ($(this).parent('tr').find('#btConciliar').attr('data-conciliado')==1) {
+			sumSaidaC += 1*($(this).text());
+		} else {
+			sumSaidaNC += 1*($(this).text());
+		}
 		if (!$.isNumeric(sumSaidaConta[$(this).parent('tr').find('#col_conta_nome').text()]))
 			sumSaidaConta[$(this).parent('tr').find('#col_conta_nome').text()]=0;
 		sumSaidaConta[$(this).parent('tr').find('#col_conta_nome').text()]+=1*($(this).text());
     });
-	var sumEntrada = 0;
 	$('#tbTransacoes #col_entrada').each(function () {
         sumEntrada += 1*($(this).text());
+		if ($(this).parent('tr').find('#btConciliar').attr('data-conciliado')==1) {
+			sumEntradaC += 1*($(this).text());
+		} else {
+			sumEntradaNC += 1*($(this).text());
+		}
 		if (!$.isNumeric(sumEntradaConta[$(this).parent('tr').find('#col_conta_nome').text()]))
 			sumEntradaConta[$(this).parent('tr').find('#col_conta_nome').text()]=0;
 		sumEntradaConta[$(this).parent('tr').find('#col_conta_nome').text()]+=1*($(this).text());
     });
 	var saldoTotal = sumEntrada - sumSaida;
-	$('#saldoGeral').text(parseFloat(saldoTotal).toFixed(2));
-	$('#somaTotal').text(parseFloat(saldoTotal).toFixed(2));
+	var saldoTotalC = sumEntradaC - sumSaidaC;
+	var saldoTotalNC = sumEntradaNC - sumSaidaNC;
+	$('#saldoGeral').text(parseFloat(saldoTotal).formatMoney(2));
+	$('#saldoConciliado').text(parseFloat(saldoTotalC).formatMoney(2));
+	$('#saldoNConciliado').text(parseFloat(saldoTotalNC).formatMoney(2));
+	$('#somaTotal').text(parseFloat(saldoTotal).formatMoney(2));
 	if (saldoTotal>=0) {
 		$('#saldoGeral').removeClass('SaldoNeg');
 		$('#saldoGeral').addClass('SaldoPos');
@@ -771,10 +803,24 @@ function calculaSaldoGlobal() {
 		$('#saldoGeral').addClass('SaldoNeg');
 		$('#saldoGeral').removeClass('SaldoPos');
 	}
+	if (saldoTotalC>=0) {
+		$('#saldoConciliado').removeClass('SaldoNeg');
+		$('#saldoConciliado').addClass('SaldoPos');
+	} else {
+		$('#saldoConciliado').addClass('SaldoNeg');
+		$('#saldoConciliado').removeClass('SaldoPos');
+	}
+	if (saldoTotalNC>=0) {
+		$('#saldoNConciliado').removeClass('SaldoNeg');
+		$('#saldoNConciliado').addClass('SaldoPos');
+	} else {
+		$('#saldoNConciliado').addClass('SaldoNeg');
+		$('#saldoNConciliado').removeClass('SaldoPos');
+	}
 	$(document).find('[id^=menu_saldo_]').each(function () {
 			var nomeConta = $(this).attr('id');
 			nomeConta = nomeConta.substr(11,nomeConta.length-11);
 			if ($.isNumeric(sumEntradaConta[nomeConta]))
-				$(this).text(parseFloat(+sumEntradaConta[nomeConta]-sumSaidaConta[nomeConta]).toFixed(2));
+				$(this).text(parseFloat(+sumEntradaConta[nomeConta]-sumSaidaConta[nomeConta]).formatMoney(2));
 	});
 }
