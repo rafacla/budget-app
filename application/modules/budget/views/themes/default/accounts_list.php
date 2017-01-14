@@ -56,7 +56,8 @@
  	    data-show-refresh="true"
 	    data-show-columns="true"
 		data-click-to-select="false"
-		data-locale="pt-BR">
+		data-locale="pt-BR"
+		data-height="100%">
 			<thead>
 				<tr><th id="thckAll"><input type="checkbox" id="ckbAll" data-indice="todas"></th>
 					<th data-sortable="false" class="col-xs-2" data-filed="conta">Conta</th>

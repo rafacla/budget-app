@@ -202,9 +202,14 @@ class Accounts extends Admin_Controller {
 	public function importaOFX() {
 		function toNumber($target) {
 			$switched = str_replace(',', '.', $target);
-			if(is_numeric($target)){
+			/*if(is_numeric($target)){
 				return floatval($target);
 			}elseif(is_numeric($switched)){
+				return floatval($switched);
+			}
+			*/
+			if(is_numeric($switched)){
+				log_message('error',$target."-".$switched);
 				return floatval($switched);
 			}
 		}

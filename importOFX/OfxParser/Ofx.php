@@ -230,7 +230,7 @@ class Ofx
             if ('' !== (string)$t->DTUSER) {
                 $transaction->userInitiatedDate = $this->createDateTimeFromStr($t->DTUSER);
             }
-            $transaction->amount = $this->createAmountFromStr($t->TRNAMT);
+            $transaction->amount = $this->createAmountFromStr(trim($t->TRNAMT));
             $transaction->uniqueId = (string)$t->FITID;
             $transaction->name = (string)$t->NAME;
             $transaction->memo = (string)$t->MEMO;
@@ -317,6 +317,7 @@ class Ofx
      */
     private function createAmountFromStr($amountString)
     {
+		$amountString = trim($amountString);
         // Decimal mark style (UK/US): 000.00 or 0,000.00
         if (preg_match('/^-?([\d,]+)(\.?)([\d]{2})$/', $amountString) === 1) {
             return (float)preg_replace(
