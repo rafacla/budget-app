@@ -6,18 +6,31 @@ var curDate = new Date();
 var newID='';
 
 var resposta;
+
+Number.prototype.formatMoney = function(c, d, t){
+var n = this, 
+    c = isNaN(c = Math.abs(c)) ? 2 : c, 
+    d = d == undefined ? "." : d, 
+    t = t == undefined ? "," : t, 
+    s = n < 0 ? "-$" : "$", 
+    i = String(parseInt(n = Math.abs(Number(n) || 0).toFixed(c))), 
+    j = (j = i.length) > 3 ? j % 3 : 0;
+   return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+ };
+ 
 $(function() {	
 	$(document).on('click', '#tbTransacoes tr', function(event) {
-	//$('#tbTransacoes').find('tr').click( function(){
 		if($(event.target).is('#btConciliar')) {
 			if ($(event.target).attr('data-conciliado')==1) {
 				$(event.target).removeClass('btn-success');
 				$(event.target).addClass('btn-secondary');
 				$(event.target).attr('data-conciliado',0);
+				calculaSaldoGlobal();
 			} else {
 				$(event.target).addClass('btn-success');
 				$(event.target).removeClass('btn-secondary');
 				$(event.target).attr('data-conciliado',1);
+				calculaSaldoGlobal();
 			}
 			editaConciliado($(event.target).attr('data-tid'),$(event.target).attr('data-conciliado'));
 		} else if ($(this).hasClass('selected') && event.target.type !== 'checkbox') {
@@ -57,7 +70,7 @@ $(function() {
 		maxSize: 1,
 		extensions: ["ofx"],
 		uploadFile: {
-			url: '/enviaArquivo/index.php',
+			url: '/importOFX/index.php',
 			data: null,
             type: 'POST',
             enctype: 'multipart/form-data',
@@ -139,7 +152,14 @@ $(document).on('focus', '.select2', function() {
 $(document).on('click', function(evt) {
 	if($(evt.target).is('#btCancelar')) {
         cancelaEdicao();
-    } else if($(evt.target).is('#btSalvar')) {
+    } else if ($(evt.target).is('#ckbAll')) {
+		$('input:checkbox').prop('checked',$('#ckbAll').prop('checked'));
+		if ($('#ckbAll').prop('checked')) {
+			$('#tbTransacoes tr').addClass('selected');
+		} else {
+			$('#tbTransacoes tr').removeClass('selected');
+		}
+	} else if($(evt.target).is('#btSalvar')) {
 		salvaTransacao();
 	} else if($(evt.target).is('#btAddSub')) { 
 		adicionaSubtransacao();
@@ -197,11 +217,14 @@ function deletarTransacoesSelecionadas() {
 		$(this).remove();
 		$.post(base_url+"deletaTransacao", { trid: trid });
 	});
+	calculaSaldoGlobal();
 }
 
 
 function adicionaTransacao() {
-	if ($('#tbTransacoes .editaTransacao').length){
+	if (contas.length == 0) {
+		eModal.alert('Você deve adicionar uma conta antes de adicionar uma transação!');
+	} else if ($('#tbTransacoes .editaTransacao').length){
 		$('#btCancelar').fadeIn(10).fadeOut(100).fadeIn(100);
 		$('#btSalvar').fadeIn(50).fadeOut(100).fadeIn(100);
 	} else {
@@ -222,6 +245,9 @@ function adicionaTransacao() {
 					<td id="col_saida" class="valores"></td>
 					<td id="col_entrada" class="valores"></td>
 					<td id="col_saldo" class="valores"></td>	
+					<td id="col_conciliado">
+						<button id="btConciliar" data-conciliado="0" data-tid="rNew" type="button" class="btn btn-secondary btn-circle btn-xs">C</button>
+					</td>
 				</tr>`;
 		htmEditavel = `<tbody id="edita_r`+rID+`">
 				<tr class="editaTransacao selected" id="main1" data-parent="`+rID+`">
@@ -234,6 +260,7 @@ function adicionaTransacao() {
 					<td><input type="text" name="totalSaida" placeholder="Saída" id="totalSaida" value="" class="form-control form-inline transacao input-sm valor"/></td>
 					<td><input type="text" name="totalEntrada" placeholder="Entrada" id="totalEntrada" value="" class="form-control form-inline transacao input-sm valor"/></td>
 					<td><input type="text" name="split" id="split" value="false" style="display:none"></td>
+					<td></td>
 				</tr>
 				<tr class="editaTransacao selected">
 					<td></td><td><input name="contaID" type="text" id="contaID" value="`+contaID+`" style="display:none">
@@ -244,6 +271,7 @@ function adicionaTransacao() {
 						</button>
 					</td>							
 					<td style="text-align: right">Faltando distribuir:</td><td></td>
+					<td></td>
 					<td></td>
 					<td></td>
 					<td></td>
@@ -262,6 +290,7 @@ function adicionaTransacao() {
 						  <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span> Cancelar
 						</button>
 					</td>
+					<td></td>
 					<td></td>
 				</tr>
 			</tbody>`;
@@ -334,6 +363,7 @@ function adicionaSubtransacao() {
 			<td><input type="text" placeholder="Memo"  data-trid="`+proxNrID+`" id="memo_`+proxNrID+`" name="memo_`+proxNrID+`" val()="`+$('#memo').val()+`" class="form-control form-inline transacao input-sm" disabled/></td>
 			<td><input type="text" placeholder="Saída" data-trid="`+proxNrID+`"  id="saida_`+proxNrID+`" name="saida_`+proxNrID+`" val()="" class="form-control form-inline transacao input-sm valor"/></td>
 			<td><input type="text" placeholder="Entrada" data-trid="`+proxNrID+`"  id="entrada_`+proxNrID+`" name="entrada_`+proxNrID+`" val()="" class="form-control form-inline transacao input-sm valor"/></td>
+			<td></td>
 			<td></td>
 		</tr>
 	`;
@@ -498,7 +528,7 @@ function salvaTransacao() {
 		resposta = JSON.parse(response);
 		newID = resposta[0];
 		$('#r'+Indice).attr('data-tid',newID);
-		
+		$('#r'+Indice).find('#btConciliar').attr('data-tid',newID);
 		$('#edita_r'+Indice+' #transacaoID').val(newID);
 		if (resposta[1] == 1) {
 			$('#edita_r'+Indice+' #tritem_id').val(resposta[2][0]);
@@ -546,6 +576,7 @@ function salvaTransacao() {
 	linhaEditar.find('#col_saida').html(linhaEditada.find('#totalSaida').val());
 	linhaEditar.find('#col_entrada').html(linhaEditada.find('#totalEntrada').val());
 	linhaEditar.find('#col_saldo').html(saldo);
+	
 	$('#edita_r'+Indice).children().replaceWith();
 	$('#edita_r'+Indice).append($('#tbTransacoes .editaTransacao').clone());
 	
@@ -747,22 +778,40 @@ function calculaSaldoGlobal() {
 	var sumSaidaConta = {};
 	var sumEntradaConta = {};
 	var sumSaida = 0;
+	var sumSaidaC = 0;
+	var sumSaidaNC = 0;
+	var sumEntrada = 0;
+	var sumEntradaC = 0;
+	var sumEntradaNC = 0;
 	$('#tbTransacoes #col_saida').each(function () {
         sumSaida += 1*($(this).text());
+		if ($(this).parent('tr').find('#btConciliar').attr('data-conciliado')==1) {
+			sumSaidaC += 1*($(this).text());
+		} else {
+			sumSaidaNC += 1*($(this).text());
+		}
 		if (!$.isNumeric(sumSaidaConta[$(this).parent('tr').find('#col_conta_nome').text()]))
 			sumSaidaConta[$(this).parent('tr').find('#col_conta_nome').text()]=0;
 		sumSaidaConta[$(this).parent('tr').find('#col_conta_nome').text()]+=1*($(this).text());
     });
-	var sumEntrada = 0;
 	$('#tbTransacoes #col_entrada').each(function () {
         sumEntrada += 1*($(this).text());
+		if ($(this).parent('tr').find('#btConciliar').attr('data-conciliado')==1) {
+			sumEntradaC += 1*($(this).text());
+		} else {
+			sumEntradaNC += 1*($(this).text());
+		}
 		if (!$.isNumeric(sumEntradaConta[$(this).parent('tr').find('#col_conta_nome').text()]))
 			sumEntradaConta[$(this).parent('tr').find('#col_conta_nome').text()]=0;
 		sumEntradaConta[$(this).parent('tr').find('#col_conta_nome').text()]+=1*($(this).text());
     });
 	var saldoTotal = sumEntrada - sumSaida;
-	$('#saldoGeral').text(parseFloat(saldoTotal).toFixed(2));
-	$('#somaTotal').text(parseFloat(saldoTotal).toFixed(2));
+	var saldoTotalC = sumEntradaC - sumSaidaC;
+	var saldoTotalNC = sumEntradaNC - sumSaidaNC;
+	$('#saldoGeral').text(parseFloat(saldoTotal).formatMoney(2));
+	$('#saldoConciliado').text(parseFloat(saldoTotalC).formatMoney(2));
+	$('#saldoNConciliado').text(parseFloat(saldoTotalNC).formatMoney(2));
+	$('#somaTotal').text(parseFloat(saldoTotal).formatMoney(2));
 	if (saldoTotal>=0) {
 		$('#saldoGeral').removeClass('SaldoNeg');
 		$('#saldoGeral').addClass('SaldoPos');
@@ -770,10 +819,24 @@ function calculaSaldoGlobal() {
 		$('#saldoGeral').addClass('SaldoNeg');
 		$('#saldoGeral').removeClass('SaldoPos');
 	}
+	if (saldoTotalC>=0) {
+		$('#saldoConciliado').removeClass('SaldoNeg');
+		$('#saldoConciliado').addClass('SaldoPos');
+	} else {
+		$('#saldoConciliado').addClass('SaldoNeg');
+		$('#saldoConciliado').removeClass('SaldoPos');
+	}
+	if (saldoTotalNC>=0) {
+		$('#saldoNConciliado').removeClass('SaldoNeg');
+		$('#saldoNConciliado').addClass('SaldoPos');
+	} else {
+		$('#saldoNConciliado').addClass('SaldoNeg');
+		$('#saldoNConciliado').removeClass('SaldoPos');
+	}
 	$(document).find('[id^=menu_saldo_]').each(function () {
 			var nomeConta = $(this).attr('id');
 			nomeConta = nomeConta.substr(11,nomeConta.length-11);
 			if ($.isNumeric(sumEntradaConta[nomeConta]))
-				$(this).text(parseFloat(+sumEntradaConta[nomeConta]-sumSaidaConta[nomeConta]).toFixed(2));
+				$(this).text(parseFloat(+sumEntradaConta[nomeConta]-sumSaidaConta[nomeConta]).formatMoney(2));
 	});
 }

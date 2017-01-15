@@ -3,4 +3,3 @@
 $config['ci_budget_template_dir'] = ""; // you need this line
 $config['ci_budget_template_dir_public'] = $config['ci_budget_template_dir'] . "public/themes/default/";
 $config['ci_budget_template_dir_admin'] = $config['ci_budget_template_dir'] . "budget/themes/default/";
-$config['ci_budget_template_dir_welcome'] = $config['ci_budget_template_dir'] . "welcome/themes/default/";

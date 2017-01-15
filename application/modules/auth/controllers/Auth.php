@@ -22,7 +22,7 @@ class Auth extends MY_Controller {
         } else {
             $data['page'] = $this->config->item('ci_budget_template_dir_public') . "login_form";
             $data['module'] = 'auth';
-
+			
             $this->load->view($this->_container, $data);
         }
     }
@@ -30,15 +30,15 @@ class Auth extends MY_Controller {
     function login() {
         $this->form_validation->set_rules('email', 'Email', 'required');
         $this->form_validation->set_rules('password', 'Password', 'required');
-
+		
         if ($this->form_validation->run() == true) {
             $remember = (bool) $this->input->post('remember');
-
+			
             if ($this->ion_auth->login($this->input->post('email'), $this->input->post('password'), $remember)) {
                 $this->session->set_flashdata('message', $this->ion_auth->messages());
                 redirect('/', 'refresh');
             } else {
-                $this->session->set_flashdata('message', $this->ion_auth->errors());
+				$this->session->set_flashdata('message', $this->ion_auth->errors());
                 redirect('auth', 'refresh');
             }
         } else {

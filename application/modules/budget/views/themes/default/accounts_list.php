@@ -24,11 +24,11 @@
 		<?php 
 			$saldo_n_conciliado = $saldo - $saldo_conciliado;
 		?>
-		<div class="exibeInformacoes"><span class="Titulo">Saldo conciliado:</span><br/><span id="saldoGeral" class="<?=($saldo_conciliado>=0 ? "SaldoPos" : "SaldoNeg")?>"><?="$".number_format($saldo_conciliado, 2, '.', '')?></span></div>
+		<div class="exibeInformacoes"><span class="Titulo">Saldo conciliado:</span><br/><span id="saldoConciliado" class="<?=($saldo_conciliado>=0 ? "SaldoPos" : "SaldoNeg")?>"><?=($saldo_conciliado>=0 ? "$" : "-$")?><?=number_format(abs($saldo_conciliado), 2, '.', ',')?></span></div>
 		<div class="exibeInformacoes"><span class="Divisor">+</span></div>
-		<div class="exibeInformacoes"><span class="Titulo">Saldo a haver:</span><br/><span id="saldoGeral" class="<?=($saldo_n_conciliado>=0 ? "SaldoPos" : "SaldoNeg")?>"><?="$".number_format($saldo_n_conciliado, 2, '.', '')?></span></div>
+		<div class="exibeInformacoes"><span class="Titulo">Saldo a haver:</span><br/><span id="saldoNConciliado" class="<?=($saldo_n_conciliado>=0 ? "SaldoPos" : "SaldoNeg")?>"><?=($saldo_n_conciliado>=0 ? "$" : "-$")?><?=number_format(abs($saldo_n_conciliado), 2, '.', ',')?></span></div>
 		<div class="exibeInformacoes"><span class="Divisor">=</span></div>
-		<div class="exibeInformacoes"><span class="Titulo">Saldo total:</span><br/><span id="saldoGeral" class="<?=($saldo>=0 ? "SaldoPos" : "SaldoNeg")?>"><?="$".number_format($saldo, 2, '.', '')?></span></div>
+		<div class="exibeInformacoes"><span class="Titulo">Saldo total:</span><br/><span id="saldoGeral" class="<?=($saldo>=0 ? "SaldoPos" : "SaldoNeg")?>"><?=($saldo>=0 ? "$" : "-$")?><?=number_format(abs($saldo), 2, '.', ',')?></span></div>
 	</ul>
 </nav>
 
@@ -41,10 +41,11 @@
 			<a id="btAddTransacao" href="#" class=""><i class="fa fa-plus-circle fa-fw"></i>Adicionar transação</a>
 			<div class="dropdown" style="display: inline-block;">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-pencil-square-o fa-fw"></i><span id="btEditar">Editar</span><span class="caret"></span></a>
-				<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-					<li><a href="#">Mesclar</a></li>
+				<ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="font-size:0.8em;">
+					<li><a href="#">Marcar como conciliado</a></li>
+					<li><a href="#">Marcar como não conciliado</a></li>
 					<li role="separator" class="divider"></li>
-					<li><a href="#" id="btExcluirSel">Excluir</a></li>
+					<li><a href="#" id="btExcluirSel">Excluir selecionadas</a></li>
 				</ul>
 			</div>
 			<a data-toggle="modal" href="#importaTransacoes" id="btImport"><i class="fa fa-upload fa-fw"></i>Importar</a>
@@ -52,17 +53,19 @@
 	<form id="formTransacoes" method="post">	
 	<table class="table table-hover table-no-bordered table-condensed table-responsive tabela" id="tbTransacoes" 
 		data-toggle="table"
+		data-show-export="true"
 		data-search="true"
  	    data-show-refresh="true"
-	    data-show-columns="true"
+	    data-show-columns="false"
 		data-click-to-select="false"
-		data-locale="pt-BR">
+		data-locale="pt-BR"
+		data-height="100%">
 			<thead>
 				<tr><th id="thckAll"><input type="checkbox" id="ckbAll" data-indice="todas"></th>
-					<th data-sortable="false" class="col-xs-2" data-filed="conta">Conta</th>
+					<th data-sortable="false" class="col-xs-1" data-filed="conta">Conta</th>
 					<th data-sortable="false" class="col-xs-1" data-field="date" data-sort-name="_date_data" data-sorter="monthSorter">Data</th>
-					<th data-sortable="false" class="col-xs-2" data-field="sacado">Sacado</th>
-					<th data-sortable="false" class="col-xs-3" data-field="categoria">Categoria</th>
+					<th data-sortable="false" class="col-xs-4" data-field="sacado">Sacado</th>
+					<th data-sortable="false" class="col-xs-2" data-field="categoria">Categoria</th>
 					<th data-sortable="false" class="col-xs-1" data-field="memo">Memo</th>
 					<th data-sortable="false" class="col-xs-1 valores" data-field="saida">Saída</th>
 					<th data-sortable="false" class="col-xs-1 valores" data-field="entrada">Entrada</th>

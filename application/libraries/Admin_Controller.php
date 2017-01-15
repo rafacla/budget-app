@@ -22,6 +22,9 @@ class Admin_Controller extends MY_Controller {
 		$this->load->model(array('budget/profile'));
 		$this->load->library('session');
 		
+		if (!$this->ion_auth->logged_in()) {
+            redirect('/auth', 'refresh');
+        }
 		
 		if ($this->session->has_userdata('profile_uid') && $this->session->profile_uid !== '' && is_string($this->session->profile_uid )) {
 			$this->aContas = $this->vw_contas_saldo->get_all('',array('profile_uid'=>$this->session->profile_uid),'','','conta_nome');
@@ -29,9 +32,7 @@ class Admin_Controller extends MY_Controller {
 			redirect('/profiles', 'refresh');
 		}
 		
-        if (!$this->ion_auth->logged_in()) {
-            redirect('/auth', 'refresh');
-        }
+        
 
 		
         $this->is_admin = $this->ion_auth->is_admin();
