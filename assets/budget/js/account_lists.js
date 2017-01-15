@@ -20,7 +20,6 @@ var n = this,
  
 $(function() {	
 	$(document).on('click', '#tbTransacoes tr', function(event) {
-	//$('#tbTransacoes').find('tr').click( function(){
 		if($(event.target).is('#btConciliar')) {
 			if ($(event.target).attr('data-conciliado')==1) {
 				$(event.target).removeClass('btn-success');
@@ -153,7 +152,14 @@ $(document).on('focus', '.select2', function() {
 $(document).on('click', function(evt) {
 	if($(evt.target).is('#btCancelar')) {
         cancelaEdicao();
-    } else if($(evt.target).is('#btSalvar')) {
+    } else if ($(evt.target).is('#ckbAll')) {
+		$('input:checkbox').prop('checked',$('#ckbAll').prop('checked'));
+		if ($('#ckbAll').prop('checked')) {
+			$('#tbTransacoes tr').addClass('selected');
+		} else {
+			$('#tbTransacoes tr').removeClass('selected');
+		}
+	} else if($(evt.target).is('#btSalvar')) {
 		salvaTransacao();
 	} else if($(evt.target).is('#btAddSub')) { 
 		adicionaSubtransacao();
@@ -216,7 +222,9 @@ function deletarTransacoesSelecionadas() {
 
 
 function adicionaTransacao() {
-	if ($('#tbTransacoes .editaTransacao').length){
+	if (contas.length == 0) {
+		eModal.alert('Você deve adicionar uma conta antes de adicionar uma transação!');
+	} else if ($('#tbTransacoes .editaTransacao').length){
 		$('#btCancelar').fadeIn(10).fadeOut(100).fadeIn(100);
 		$('#btSalvar').fadeIn(50).fadeOut(100).fadeIn(100);
 	} else {
@@ -237,6 +245,9 @@ function adicionaTransacao() {
 					<td id="col_saida" class="valores"></td>
 					<td id="col_entrada" class="valores"></td>
 					<td id="col_saldo" class="valores"></td>	
+					<td id="col_conciliado">
+						<button id="btConciliar" data-conciliado="0" data-tid="rNew" type="button" class="btn btn-secondary btn-circle btn-xs">C</button>
+					</td>
 				</tr>`;
 		htmEditavel = `<tbody id="edita_r`+rID+`">
 				<tr class="editaTransacao selected" id="main1" data-parent="`+rID+`">
@@ -249,6 +260,7 @@ function adicionaTransacao() {
 					<td><input type="text" name="totalSaida" placeholder="Saída" id="totalSaida" value="" class="form-control form-inline transacao input-sm valor"/></td>
 					<td><input type="text" name="totalEntrada" placeholder="Entrada" id="totalEntrada" value="" class="form-control form-inline transacao input-sm valor"/></td>
 					<td><input type="text" name="split" id="split" value="false" style="display:none"></td>
+					<td></td>
 				</tr>
 				<tr class="editaTransacao selected">
 					<td></td><td><input name="contaID" type="text" id="contaID" value="`+contaID+`" style="display:none">
@@ -259,6 +271,7 @@ function adicionaTransacao() {
 						</button>
 					</td>							
 					<td style="text-align: right">Faltando distribuir:</td><td></td>
+					<td></td>
 					<td></td>
 					<td></td>
 					<td></td>
@@ -277,6 +290,7 @@ function adicionaTransacao() {
 						  <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span> Cancelar
 						</button>
 					</td>
+					<td></td>
 					<td></td>
 				</tr>
 			</tbody>`;
@@ -349,6 +363,7 @@ function adicionaSubtransacao() {
 			<td><input type="text" placeholder="Memo"  data-trid="`+proxNrID+`" id="memo_`+proxNrID+`" name="memo_`+proxNrID+`" val()="`+$('#memo').val()+`" class="form-control form-inline transacao input-sm" disabled/></td>
 			<td><input type="text" placeholder="Saída" data-trid="`+proxNrID+`"  id="saida_`+proxNrID+`" name="saida_`+proxNrID+`" val()="" class="form-control form-inline transacao input-sm valor"/></td>
 			<td><input type="text" placeholder="Entrada" data-trid="`+proxNrID+`"  id="entrada_`+proxNrID+`" name="entrada_`+proxNrID+`" val()="" class="form-control form-inline transacao input-sm valor"/></td>
+			<td></td>
 			<td></td>
 		</tr>
 	`;
@@ -513,7 +528,7 @@ function salvaTransacao() {
 		resposta = JSON.parse(response);
 		newID = resposta[0];
 		$('#r'+Indice).attr('data-tid',newID);
-		
+		$('#r'+Indice).find('#btConciliar').attr('data-tid',newID);
 		$('#edita_r'+Indice+' #transacaoID').val(newID);
 		if (resposta[1] == 1) {
 			$('#edita_r'+Indice+' #tritem_id').val(resposta[2][0]);
@@ -561,6 +576,7 @@ function salvaTransacao() {
 	linhaEditar.find('#col_saida').html(linhaEditada.find('#totalSaida').val());
 	linhaEditar.find('#col_entrada').html(linhaEditada.find('#totalEntrada').val());
 	linhaEditar.find('#col_saldo').html(saldo);
+	
 	$('#edita_r'+Indice).children().replaceWith();
 	$('#edita_r'+Indice).append($('#tbTransacoes .editaTransacao').clone());
 	

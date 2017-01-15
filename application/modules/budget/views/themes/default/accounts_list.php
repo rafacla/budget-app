@@ -41,10 +41,11 @@
 			<a id="btAddTransacao" href="#" class=""><i class="fa fa-plus-circle fa-fw"></i>Adicionar transação</a>
 			<div class="dropdown" style="display: inline-block;">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-pencil-square-o fa-fw"></i><span id="btEditar">Editar</span><span class="caret"></span></a>
-				<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-					<li><a href="#">Mesclar</a></li>
+				<ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="font-size:0.8em;">
+					<li><a href="#">Marcar como conciliado</a></li>
+					<li><a href="#">Marcar como não conciliado</a></li>
 					<li role="separator" class="divider"></li>
-					<li><a href="#" id="btExcluirSel">Excluir</a></li>
+					<li><a href="#" id="btExcluirSel">Excluir selecionadas</a></li>
 				</ul>
 			</div>
 			<a data-toggle="modal" href="#importaTransacoes" id="btImport"><i class="fa fa-upload fa-fw"></i>Importar</a>

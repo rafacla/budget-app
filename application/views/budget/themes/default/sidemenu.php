@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
     <head>
 
@@ -57,9 +57,9 @@
 								</a>
 								<ul class="dropdown-menu">
 									<li class="semBorda"><a href="<?= base_url('profiles') ?>"><i class="fa fa-exchange fa-fw"></i>Trocar Livro</a></li>
-									<li class="semBorda"><a href="<?= base_url('profiles/novo/'.$this->profile->uniqueid) ?>"><i class="fa fa-leaf fa-fw"></i>Novo começo</a></li>
-									<li role="separator" class="divider"></li>
-									<li class="semBorda"><a href="#"><i class="fa fa-cog fa-fw"></i>Preferências</a></li>
+									<li style="display:none" class="semBorda"><a href="<?= base_url('profiles/novo/'.$this->profile->uniqueid) ?>"><i class="fa fa-leaf fa-fw"></i>Novo começo</a></li>
+									<li style="display:none" role="separator" class="divider"></li>
+									<li style="display:none" class="semBorda"><a href="#"><i class="fa fa-cog fa-fw"></i>Preferências</a></li>
 								</ul>
 							</div>
 							
