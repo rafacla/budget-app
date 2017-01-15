@@ -18,7 +18,7 @@ var n = this,
    return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
  };
  
-$(function() {	
+$(function() {
 	$(document).on('click', '#tbTransacoes tr', function(event) {
 		if($(event.target).is('#btConciliar')) {
 			if ($(event.target).attr('data-conciliado')==1) {
@@ -327,6 +327,9 @@ function adicionaEdicao(row) {
 	detail.after(res.clone().children());	
 	ligaCompletar();
 	$('#'+row).hide();
+	$("input[type=text]").focus(function() {
+	   $(this).select();
+	});	
 }
 
 $table.on('expand-row.bs.table', function(e, index, row, $detail) {
@@ -811,7 +814,32 @@ function calculaSaldoGlobal() {
 	$('#saldoGeral').text(parseFloat(saldoTotal).formatMoney(2));
 	$('#saldoConciliado').text(parseFloat(saldoTotalC).formatMoney(2));
 	$('#saldoNConciliado').text(parseFloat(saldoTotalNC).formatMoney(2));
-	$('#somaTotal').text(parseFloat(saldoTotal).formatMoney(2));
+	if (contaID==0) {
+		$('#somaTotal').text(parseFloat(saldoTotal).formatMoney(2));
+		for (var i = 0; i < contas.length; i++) {
+			var entrada = parseFloat(0);
+			var saida = parseFloat(0);
+			if (isNaN(sumEntradaConta[contas[i].conta_nome])) {
+				entrada = 0;
+			} else {
+				entrada = parseFloat(sumEntradaConta[contas[i].conta_nome]);
+			}
+			if (isNaN(sumSaidaConta[contas[i].conta_nome])) {
+				saida = 0;
+			} else {
+				saida = parseFloat(sumSaidaConta[contas[i].conta_nome]);
+			}
+			
+			$("[id='"+ contas[i].conta_nome+"']").text(parseFloat(entrada - saida).formatMoney(2));
+		}
+	} else { //A view atual é de uma conta especifica...
+		var oldAccountValue = parseFloat($('#menu_saldo_'+contaID).text().replace('$','')).toFixed(2);
+		var deltaTotal = (parseFloat(saldoTotal).toFixed(2)-oldAccountValue);
+		var newTotalValue = parseFloat($('#somaTotal').text().replace('$','')).toFixed(2);
+		newTotalValue = parseFloat(newTotalValue) + parseFloat(deltaTotal);
+		$("[id='"+contaNome+"']").text(parseFloat(saldoTotal).formatMoney(2));
+		$('#somaTotal').text(parseFloat(newTotalValue).formatMoney(2));
+	}
 	if (saldoTotal>=0) {
 		$('#saldoGeral').removeClass('SaldoNeg');
 		$('#saldoGeral').addClass('SaldoPos');

@@ -173,6 +173,7 @@
 							<td><span id="faltandoSaida" class="account valores">0</span></td>
 							<td><span id="faltandoEntrada" class="account valores">0</span></td>
 							<td></td>
+							<td></td>
 						</tr>
 						<tr class="editaTransacao">
 							<td></td><td><input name="countTr" id="countTr" value="<?=$intTr?>"  style="display:none"></td>
@@ -188,6 +189,7 @@
 								  <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span> Cancelar
 								</button>
 							</td>
+							<td></td>
 							<td></td>
 						</tr>
 						 
@@ -211,6 +213,7 @@
 								<td><input type="text" name="totalSaida" placeholder="Saída" id="totalSaida" value="<?=($list['valor']<0) ? (-1)*$list['valor'] : "0"?>" class="form-control form-inline transacao input-sm valor"/></td>
 								<td><input type="text" name="totalEntrada" placeholder="Entrada" id="totalEntrada" value="<?=($list['valor']>=0) ? $list['valor'] : "0"?>" class="form-control form-inline transacao input-sm valor"/></td>
 								<td><input type="text" name="split" id="split" value="<?=($list['count_filhas']>1 || $list['conta_para_id']!='') ? "true" : "false" ?>" style="display:none"></td>
+								<td></td>
 							</tr>
 						<?php endif; ?>
 						<?php if ($list['count_filhas']>1 || $list['conta_para_id']!=''):?>
@@ -223,6 +226,7 @@
 							<td><input type="text" placeholder="Memo"  data-trid="<?=$list['tritem_id']?>" id="memo_<?=$intTr?>" name="memo_<?=$intTr?>" value="<?=$list['memo']?>" class="form-control form-inline transacao input-sm" disabled/></td>
 							<td><input type="text" placeholder="Saída" data-trid="<?=$list['tritem_id']?>"  id="saida_<?=$intTr?>" name="saida_<?=$intTr?>" value="<?=($list['valor_item']<0) ? (-1)*$list['valor_item'] : ''?>" class="form-control form-inline transacao input-sm valor"/></td>
 							<td><input type="text" placeholder="Entrada" data-trid="<?=$list['tritem_id']?>"  id="entrada_<?=$intTr?>" name="entrada_<?=$intTr?>" value="<?=($list['valor_item']>=0) ? $list['valor_item'] : ''?>" class="form-control form-inline transacao input-sm valor"/></td>
+							<td></td>
 							<td></td>
 						</tr>
 						<?php endif;?>
@@ -242,6 +246,7 @@
 							<td><span id="faltandoSaida" class="account valores">0</span></td>
 							<td><span id="faltandoEntrada" class="account valores">0</span></td>
 							<td></td>
+							<td></td>
 						</tr>
 						<tr class="editaTransacao">
 							<td></td><td><input name="countTr" id="countTr" value="<?=$intTr?>"  style="display:none"></td><td></td><td></td><td></td>
@@ -256,6 +261,7 @@
 								  <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span> Cancelar
 								</button>
 							</td>
+							<td></td>
 							<td></td>
 						</tr>
 						 
