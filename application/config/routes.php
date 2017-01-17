@@ -60,7 +60,8 @@ $route['novousuario'] = 'budget/NewUsers/create';
 $route['auth/activate/(:any)/(:any)'] = 'budget/NewUsers/activate/$1/$2';
 $route['auth/reset_password/(:any)'] = 'budget/NewUsers/reset_password/$1';
 $route['esqueciasenha'] = 'budget/NewUsers/forgot_password';
-
+$route['user'] = 'auth/change_password';
+$route['change_language'] = 'auth/change_language';
 
 //classe profiles
 $route['profiles'] = 'budget/profiles';	

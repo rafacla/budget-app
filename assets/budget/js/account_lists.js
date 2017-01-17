@@ -833,9 +833,9 @@ function calculaSaldoGlobal() {
 			$("[id='"+ contas[i].conta_nome+"']").text(parseFloat(entrada - saida).formatMoney(2));
 		}
 	} else { //A view atual é de uma conta especifica...
-		var oldAccountValue = parseFloat($('#menu_saldo_'+contaID).text().replace('$','')).toFixed(2);
+		var oldAccountValue = parseFloat($('#menu_saldo_'+contaNome).text().replace('$','').replace(',','')).toFixed(2);
 		var deltaTotal = (parseFloat(saldoTotal).toFixed(2)-oldAccountValue);
-		var newTotalValue = parseFloat($('#somaTotal').text().replace('$','')).toFixed(2);
+		var newTotalValue = parseFloat($('#somaTotal').text().replace('$','').replace(',','')).toFixed(2);
 		newTotalValue = parseFloat(newTotalValue) + parseFloat(deltaTotal);
 		$("[id='"+contaNome+"']").text(parseFloat(saldoTotal).formatMoney(2));
 		$('#somaTotal').text(parseFloat(newTotalValue).formatMoney(2));

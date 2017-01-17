@@ -77,7 +77,7 @@
 									<i class="fa fa-user fa-fw"></i> <?=$this->logged_in_email?> <i class="fa fa-caret-up"></i>
 								</a>
 								<ul class="dropdown-menu">
-									<li><a href="<?= base_url('auth/edit') ?>"><i class="fa fa-edit fa-fw"></i>Editar perfil</a></li>
+									<li><a href="<?= base_url('user') ?>"><i class="fa fa-edit fa-fw"></i>Mudar senha</a></li>
 									<li role="separator" class="divider"></li>
 									<li><a href="<?= base_url('auth/logout') ?>"><i class="fa fa-sign-out fa-fw"></i>Logout</a></li>
 								</ul>
