@@ -11,7 +11,7 @@ class Auth extends MY_Controller {
         $this->load->library(array('ion_auth', 'form_validation'));
         $this->load->helper(array('url', 'language'));
 		if(!$this->session->userdata('lang')) {
-			$this->session->set_userdata('lang','portuguese-brazilian');
+			$this->session->set_userdata('lang',$this->config->item('language'));
 		}
 		$idiom = $this->session->userdata('lang');
 		

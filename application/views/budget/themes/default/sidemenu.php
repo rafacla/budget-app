@@ -56,32 +56,22 @@
 									<h4><?=$this->profile->nome?> <i class="fa fa-caret-down"></i></h4>
 								</a>
 								<ul class="dropdown-menu">
-									<li class="semBorda"><a href="<?= base_url('profiles') ?>"><i class="fa fa-exchange fa-fw"></i>Trocar Livro</a></li>
-									<li style="display:none" class="semBorda"><a href="<?= base_url('profiles/novo/'.$this->profile->uniqueid) ?>"><i class="fa fa-leaf fa-fw"></i>Novo começo</a></li>
-									<li style="display:none" role="separator" class="divider"></li>
-									<li style="display:none" class="semBorda"><a href="#"><i class="fa fa-cog fa-fw"></i>Preferências</a></li>
+									<li class="semBorda"><a href="<?= base_url('profiles') ?>"><i class="fa fa-exchange fa-fw"></i><?=lang('sidemenu_profile_change');?></a></li>
+									<li style="display:none" class="semBorda"><a href="<?= base_url('profiles/novo/'.$this->profile->uniqueid) ?>"><i class="fa fa-leaf fa-fw"></i><?=lang('sidemenu_profile_newbegin');?></a></li>
+									<li role="separator" class="divider"></li>
+									<li class="semBorda"><a href="<?= base_url('user') ?>"><i class="fa fa-cog fa-fw"></i><?=lang('sidemenu_profile_edit');?></a></li>
+									<li class="semBorda"><a href="<?= base_url('auth/logout') ?>"><i class="fa fa-sign-out fa-fw"></i><?=lang('sidemenu_profile_logout');?></a></li>
 								</ul>
 							</div>
 							
-							<li><a href="<?= base_url($this->profile->uniqueid.'/accounts') ?>"><i class="fa fa-university fa-fw"></i> Todas contas</a></li>
-                            <li><a href="<?= base_url($this->profile->uniqueid.'/budget') ?>"><i class="fa fa-pie-chart fa-fw"></i> Orçamento</a></li>
+							<li><a href="<?= base_url($this->profile->uniqueid.'/accounts') ?>"><i class="fa fa-university fa-fw"></i> <?=lang('sidemenu_links_accounts');?></a></li>
+                            <li><a href="<?= base_url($this->profile->uniqueid.'/budget') ?>"><i class="fa fa-pie-chart fa-fw"></i> <?=lang('sidemenu_links_budgets');?></a></li>
 							<hr>
 							<?php $this->load->view($this->config->item('ci_budget_template_dir_admin') . 'sidemenu_exibeContas'); ?>
                             <hr>
 							<?php if ($this->is_admin): ?>
                             <li><a href="<?= base_url('budget/users') ?>"><i class="fa fa-edit fa-fw"></i> Users</a></li>
                             <?php endif; ?>
-                        
-							<div class="dropup usuario">
-								<a class="dropdown-toggle" data-toggle="dropdown">
-									<i class="fa fa-user fa-fw"></i> <?=$this->logged_in_email?> <i class="fa fa-caret-up"></i>
-								</a>
-								<ul class="dropdown-menu">
-									<li><a href="<?= base_url('user') ?>"><i class="fa fa-edit fa-fw"></i>Mudar senha</a></li>
-									<li role="separator" class="divider"></li>
-									<li><a href="<?= base_url('auth/logout') ?>"><i class="fa fa-sign-out fa-fw"></i>Logout</a></li>
-								</ul>
-							</div>
 						</ul>
 					</div>
                     <!-- /.sidebar-collapse -->

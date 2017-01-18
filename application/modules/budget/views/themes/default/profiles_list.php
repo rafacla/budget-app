@@ -1,5 +1,5 @@
 <div class="container">
-   <h3>Selecione um orçamento abaixo:</h3> 
+   <h3><?=lang('profiles_select_heading');?></h3> 
 	<?php if (count($profiles)): ?>
 		<div class="row">
 		<?php foreach ($profiles as $key => $list): ?>
@@ -31,17 +31,16 @@
 		<?php endforeach; ?>
 		</div>
 	<?php else: ?>
-		<strong style="padding-left: 20px">Nenhum orçamento criado!</strong>
+		<strong style="padding-left: 20px"><?=lang('profiles_select_noresults');?></strong>
 	<?php endif; ?>		
 	<br />
-	<h3>Ou crie um novo:</h3> 
+	<h3><?=lang('profiles_create_heading');?></h3> 
 	<form action="profiles/create" method="post">
 		<div class="form-group">
-			<label>Nome</label>
-			<input class="form-control" placeholder="Nome do Profile" name="nome">
+			<input class="form-control" placeholder="<?=lang('profiles_create_placeholder');?>" name="nome">
 		</div>
 		<button type="submit" class="btn btn-primary">
-			Criar novo
+			<?=lang('profiles_create_submit');?>
 		</button>
 	</form>
 </div>

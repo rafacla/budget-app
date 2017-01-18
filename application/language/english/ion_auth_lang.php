@@ -206,3 +206,4 @@ $lang['reset_password_validation_new_password_confirm_label'] = 'Confirm New Pas
 $lang['user_profile_heading']									= 'Edit user profile';
 $lang['user_select_language']									= 'Select language below:';
 $lang['user_select_language_button']							= 'Use this language!';
+$lang['user_back_to_home']										= 'Go back to homepage';

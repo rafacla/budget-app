@@ -42,7 +42,9 @@
 					<?php echo form_submit('submit', lang('change_password_submit_btn'),"class=\"btn btn-lg btn-success btn-block\"");?></p>
 
 					<?php echo form_close();?>
+					<a href="<?= base_url('/') ?>"><i class="fa fa-undo fa-fw"></i><?=lang('user_back_to_home');?></a>
 				</div>
+				
 			</div>
 		</div>
     </div>

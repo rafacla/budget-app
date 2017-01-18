@@ -209,3 +209,4 @@ $lang['reset_password_validation_new_password_confirm_label'] = 'Confirme sua No
 $lang['user_profile_heading']									= 'Editar perfil do usuário';
 $lang['user_select_language']									= 'Selecione o idioma a ser utilizado:';
 $lang['user_select_language_button']							= 'Selecionar idioma!';
+$lang['user_back_to_home']										= 'Voltar a homepage';
