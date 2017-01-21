@@ -42,6 +42,7 @@ $lang['accounts_heads_balance']							= 'Balance';
 $lang['accounts_multiple_transfer']						= '(Multiple categories/transfer)...';
 $lang['accounts_no_category']							= 'Categorize this item!';
 $lang['accounts_add_subtransaction']					= 'Subtransaction/Transfer';
+$lang['accounts_add_transferto']						= 'Transfer to:';
 $lang['accounts_value_left']							= 'Amount remaining to assign:';
 $lang['accounts_button_save']							= 'Save';
 $lang['accounts_button_cancel']							= 'Cancel';
@@ -50,3 +51,8 @@ $lang['accounts_ofx_button'] 							= 'Open a file...';
 $lang['accounts_ofx_heading'] 							= 'OFX file import';
 $lang['accounts_button_close']							= 'Close';
 $lang['accounts_button_import']							= 'Import';
+
+//Accounts JS
+$lang['accountsJS_error_noaccounts'] = 'You must add an account before add a transaction!';
+$lang['accountsJS_error_remaining_value'] ='The subtransactions values of your transaction don\'t match.\n\nFix it using the value at \'Amount remaining to asign\'!';
+$lang['accountsJS_error_noaccounts_found'] = 'Account not found';

@@ -3,6 +3,22 @@
 	var categorias = <?php echo json_encode(array_values($categorias)); ?>;
 	var contaID = <?php echo json_encode($contaID); ?>;	
 	var contaNome = <?php echo json_encode($contaNome); ?>;
+	var lang_btSave = <?=json_encode(lang('accounts_button_save'));?>;
+	var lang_btCancel = <?=json_encode(lang('accounts_button_cancel'));?>;
+	var lang_labelSubtransaction = <?=json_encode(lang('accounts_add_subtransaction'));?>;
+	var lang_error_noaccounts = <?=json_encode(lang('accountsJS_error_noaccounts'));?>;
+	var lang_remaining_value = <?=json_encode(lang('accounts_value_left'));?>;
+	var lang_remaining_error = <?=json_encode(lang('accountsJS_error_remaining_value'));?>;
+	var lang_account_head = <?=json_encode(lang('accounts_heads_account'));?>;
+	var lang_account_date = <?=json_encode(lang('accounts_heads_date'));?>;
+	var lang_account_payee = <?=json_encode(lang('accounts_heads_payee'));?>;
+	var lang_account_inflow = <?=json_encode(lang('accounts_heads_inflow'));?>;
+	var lang_account_outflow = <?=json_encode(lang('accounts_heads_outflow'));?>;
+	var lang_error_account_notfound = <?=json_encode(lang('accountsJS_error_noaccounts_found'));?>;
+	var lang_no_category = <?=json_encode(lang('accounts_no_category'));?>;
+	var lang_transferto= <?=json_encode(lang('accounts_add_transferto'));?>;
+	
+	
 </script>
 
 <!-- Navigation -->

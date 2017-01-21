@@ -42,6 +42,7 @@ $lang['accounts_heads_balance']							= 'Saldo';
 $lang['accounts_multiple_transfer']						= '(Múltiplas categorias/transferência)...';
 $lang['accounts_no_category']							= 'Classifique este item!';
 $lang['accounts_add_subtransaction']					= 'Subtransação/Transferência';
+$lang['accounts_add_transferto']						= 'Transferir para:';
 $lang['accounts_value_left']							= 'Faltando distribuir:';
 $lang['accounts_button_save']							= 'Salvar';
 $lang['accounts_button_cancel']							= 'Cancelar';
@@ -50,3 +51,8 @@ $lang['accounts_ofx_button'] 							= 'Escolher arquivo...';
 $lang['accounts_ofx_heading'] 							= 'Importar arquivo OFX';
 $lang['accounts_button_close']							= 'Fechar';
 $lang['accounts_button_import']							= 'Importar';
+
+//Accounts JS
+$lang['accountsJS_error_noaccounts'] = 'Você deve adicionar uma conta antes de adicionar uma transação!';
+$lang['accountsJS_error_remaining_value'] ='Os subitens da sua transação não coincidem com os valores da sua transação.\n\nCorrija os valores usando a linha Faltando distribuir!';
+$lang['accountsJS_error_noaccounts_found'] = 'Conta não encontrada';

@@ -67,7 +67,7 @@ class Auth extends MY_Controller {
 	
 	public function change_language()
 	{
-		$this->session->set_userdata('lang',$this->input->post('language'));
+		$this->session->set_tempdata('lang',$this->input->post('language'),10*365*24*60*60);
 		redirect('user', 'refresh');
 	}
 	
