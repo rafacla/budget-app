@@ -26,7 +26,7 @@ class Accounts extends Admin_Controller {
 			
 			if ($conta_id == '') {
 				$accounts = $this->account->get_all('',array('profile_uid'=>$profile_uid),'','','data_un,valor');
-				$data['contaNome'] = "Todas as contas";
+				$data['contaNome'] = lang('accounts_name_all');
 				$data['contaID'] = 0;
 				$saldos = $this->vw_contas_saldo->get_all('',array('profile_uid'=>$profile_uid));
 			} else {

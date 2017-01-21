@@ -18,7 +18,7 @@ var n = this,
    return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
  };
  
-$(function() {	
+$(function() {
 	$(document).on('click', '#tbTransacoes tr', function(event) {
 		if($(event.target).is('#btConciliar')) {
 			if ($(event.target).attr('data-conciliado')==1) {
@@ -223,7 +223,7 @@ function deletarTransacoesSelecionadas() {
 
 function adicionaTransacao() {
 	if (contas.length == 0) {
-		eModal.alert('Você deve adicionar uma conta antes de adicionar uma transação!');
+		eModal.alert(lang_error_noaccounts);
 	} else if ($('#tbTransacoes .editaTransacao').length){
 		$('#btCancelar').fadeIn(10).fadeOut(100).fadeIn(100);
 		$('#btSalvar').fadeIn(50).fadeOut(100).fadeIn(100);
@@ -252,13 +252,13 @@ function adicionaTransacao() {
 		htmEditavel = `<tbody id="edita_r`+rID+`">
 				<tr class="editaTransacao selected" id="main1" data-parent="`+rID+`">
 					<td><input id="tritem_id" name="tritem_id" value="" style="display:none"></td>
-					<td><div id="conta_nome" class="input-group-btn"><input type="text" placeholder="Conta" id="conta" data-formValue="`+contaID+`" value="`+contaNome+`" class="form-control form-inline transacao input-sm typeahead"/></div></td>
-					<td><input name="dataTr" type="text" data-provide="datepicker" placeholder="Data" id="dataTr" value="`+$.format.date(curDate,'dd/MM/yyyy')+`" class="form-control form-inline transacao input-sm"></td>
-					<td><input type="text" placeholder="Sacado" data-trid="" id="sacado" name="sacado" value="" class="form-control form-inline transacao input-sm"/></td>
+					<td><div id="conta_nome" class="input-group-btn"><input type="text" placeholder="`+lang_account_head+`" id="conta" data-formValue="`+contaID+`" value="`+contaNome+`" class="form-control form-inline transacao input-sm typeahead"/></div></td>
+					<td><input name="dataTr" type="text" data-provide="datepicker" placeholder="`+lang_account_date+`" id="dataTr" value="`+$.format.date(curDate,'dd/MM/yyyy')+`" class="form-control form-inline transacao input-sm"></td>
+					<td><input type="text" placeholder="`+lang_account_payee+`" data-trid="" id="sacado" name="sacado" value="" class="form-control form-inline transacao input-sm"/></td>
 					<td id="cat"></td>
 					<td><input type="text" placeholder="Memo"  data-trid="" id="memo" name="memo" value="" class="form-control form-inline transacao input-sm"/></td>
-					<td><input type="text" name="totalSaida" placeholder="Saída" id="totalSaida" value="" class="form-control form-inline transacao input-sm valor"/></td>
-					<td><input type="text" name="totalEntrada" placeholder="Entrada" id="totalEntrada" value="" class="form-control form-inline transacao input-sm valor"/></td>
+					<td><input type="text" name="totalSaida" placeholder="`+lang_account_outflow+`" id="totalSaida" value="" class="form-control form-inline transacao input-sm valor"/></td>
+					<td><input type="text" name="totalEntrada" placeholder="`+lang_account_inflow+`" id="totalEntrada" value="" class="form-control form-inline transacao input-sm valor"/></td>
 					<td><input type="text" name="split" id="split" value="false" style="display:none"></td>
 					<td></td>
 				</tr>
@@ -267,10 +267,10 @@ function adicionaTransacao() {
 					</td><td><input type="text" name="transacaoID" id="transacaoID" value="" style="display:none"></td>
 					<td>
 						<button type="button" class="btn btn-info btn-sm" aria-label="Adicionar Subtransação"  id="btAddSub">
-						  <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Subtransação/Transferência
+						  <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> `+lang_labelSubtransaction+`
 						</button>
 					</td>							
-					<td style="text-align: right">Faltando distribuir:</td><td></td>
+					<td style="text-align: right">`+lang_remaining_value+`</td><td></td>
 					<td></td>
 					<td></td>
 					<td></td>
@@ -282,12 +282,12 @@ function adicionaTransacao() {
 					<td></td>
 					<td>
 						<button type="submit" class="btn btn-success btn-sm" aria-label="Salvar" id="btSalvar">
-						  <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Salvar
+						  <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> `+lang_btSave+`
 						</button>
 					</td>
 					<td>
 						<button type="button" class="btn btn-danger btn-sm" aria-label="Cancelar" id="btCancelar">
-						  <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span> Cancelar
+						  <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span> `+lang_btCancel+`
 						</button>
 					</td>
 					<td></td>
@@ -327,6 +327,9 @@ function adicionaEdicao(row) {
 	detail.after(res.clone().children());	
 	ligaCompletar();
 	$('#'+row).hide();
+	$("input[type=text]").focus(function() {
+	   $(this).select();
+	});	
 }
 
 $table.on('expand-row.bs.table', function(e, index, row, $detail) {
@@ -358,11 +361,11 @@ function adicionaSubtransacao() {
 			<td><input class="transfpara" type="text" name="transferir_para_id_`+proxNrID+`" id="transferir_para_id_`+proxNrID+`" val()="" style="display:none"></td>
 			<td>`+tritem_ID+`</td>
 			<td align="right"><a href="#"><span style="font-size: 22px; padding-top:4px;" class="glyphicon glyphicon-remove-circle" aria-hidden="true"  id="remSubt" data-id="`+proxNrID+`"></span></a></td>
-			<td><div id="conta_nome" class="input-group-btn"><input type="text" placeholder="Transferir para:" data-trid="`+proxNrID+`" id="transferir_`+proxNrID+`" name="transferir_`+proxNrID+`>" data-intTr="`+proxNrID+`" value="" class="form-control form-inline transacao input-sm typeahead transferir_para"/></div></td>
+			<td><div id="conta_nome" class="input-group-btn"><input type="text" placeholder="`+lang_transferto+`" data-trid="`+proxNrID+`" id="transferir_`+proxNrID+`" name="transferir_`+proxNrID+`>" data-intTr="`+proxNrID+`" value="" class="form-control form-inline transacao input-sm typeahead transferir_para"/></div></td>
 			<td id="cat`+proxNrID+`"></td>
 			<td><input type="text" placeholder="Memo"  data-trid="`+proxNrID+`" id="memo_`+proxNrID+`" name="memo_`+proxNrID+`" val()="`+$('#memo').val()+`" class="form-control form-inline transacao input-sm" disabled/></td>
-			<td><input type="text" placeholder="Saída" data-trid="`+proxNrID+`"  id="saida_`+proxNrID+`" name="saida_`+proxNrID+`" val()="" class="form-control form-inline transacao input-sm valor"/></td>
-			<td><input type="text" placeholder="Entrada" data-trid="`+proxNrID+`"  id="entrada_`+proxNrID+`" name="entrada_`+proxNrID+`" val()="" class="form-control form-inline transacao input-sm valor"/></td>
+			<td><input type="text" placeholder="`+lang_account_outflow+`" data-trid="`+proxNrID+`"  id="saida_`+proxNrID+`" name="saida_`+proxNrID+`" val()="" class="form-control form-inline transacao input-sm valor"/></td>
+			<td><input type="text" placeholder="`+lang_account_inflow+`" data-trid="`+proxNrID+`"  id="entrada_`+proxNrID+`" name="entrada_`+proxNrID+`" val()="" class="form-control form-inline transacao input-sm valor"/></td>
 			<td></td>
 			<td></td>
 		</tr>
@@ -380,7 +383,7 @@ function adicionaSubtransacao() {
 	$('#cat'+proxNrID).find('select').attr('id','categoria_'+proxNrID);
 	$('#cat'+proxNrID).find('select').attr('name','categoria_'+proxNrID);
 	$('.categorias').select2({
-		placeholder: 'Categorize a transação'
+		placeholder: lang_no_category
 	});
 	$('#categoria_'+proxNrID).select2('val','0');
 	$('select').on("select2:select", function (e) { 
@@ -482,7 +485,7 @@ function salvaTransacao() {
 	//NAO PERMITE SALVAR SE A TRANSAÇÃO TIVER DESABALANCEADA:
 	calculaDiferenca();
 	if (+$('#faltandoEntrada').text()!=0 || +$('#faltandoSaida').text()!=0) {
-		alert('Os subitens da sua transação não coincidem com os valores da sua transação.\n\nCorrija os valores usando a linha Faltando distribuir!');
+		alert(lang_remaining_error);
 		return -1;
 	}
 	
@@ -614,8 +617,8 @@ function ligaCompletar() {
 	  source: lista_contasWithDefault,
 	  display: 'conta_nome',
 	  templates: {
-		header: '<h3 class="nome_contas">Contas</h3>',
-		empty: '<h3 class="nome_contas">Contas</h3><h5 class="conteudo">Conta não encontrada</h5>',
+		header: '<h3 class="nome_contas">'+lang_account_head+'</h3>',
+		empty: '<h3 class="nome_contas">'+lang_account_head+'</h3><h5 class="conteudo">'+lang_error_account_notfound+'</h5>',
 		suggestion: function(data) {
 			return '<p>' + data.conta_nome + '</p>';
 		}
@@ -704,7 +707,7 @@ function ligaCompletar() {
 	});
 	
 	$('select').select2({
-		placeholder: 'Categorize a transação',
+		placeholder: lang_no_category,
 		selectOnClose: true
 	});
 	$('select').on("select2:select", function (e) { 
@@ -811,7 +814,32 @@ function calculaSaldoGlobal() {
 	$('#saldoGeral').text(parseFloat(saldoTotal).formatMoney(2));
 	$('#saldoConciliado').text(parseFloat(saldoTotalC).formatMoney(2));
 	$('#saldoNConciliado').text(parseFloat(saldoTotalNC).formatMoney(2));
-	$('#somaTotal').text(parseFloat(saldoTotal).formatMoney(2));
+	if (contaID==0) {
+		$('#somaTotal').text(parseFloat(saldoTotal).formatMoney(2));
+		for (var i = 0; i < contas.length; i++) {
+			var entrada = parseFloat(0);
+			var saida = parseFloat(0);
+			if (isNaN(sumEntradaConta[contas[i].conta_nome])) {
+				entrada = 0;
+			} else {
+				entrada = parseFloat(sumEntradaConta[contas[i].conta_nome]);
+			}
+			if (isNaN(sumSaidaConta[contas[i].conta_nome])) {
+				saida = 0;
+			} else {
+				saida = parseFloat(sumSaidaConta[contas[i].conta_nome]);
+			}
+			
+			$("[id='"+ contas[i].conta_nome+"']").text(parseFloat(entrada - saida).formatMoney(2));
+		}
+	} else { //A view atual é de uma conta especifica...
+		var oldAccountValue = parseFloat($('#menu_saldo_'+contaNome).text().replace('$','').replace(',','')).toFixed(2);
+		var deltaTotal = (parseFloat(saldoTotal).toFixed(2)-oldAccountValue);
+		var newTotalValue = parseFloat($('#somaTotal').text().replace('$','').replace(',','')).toFixed(2);
+		newTotalValue = parseFloat(newTotalValue) + parseFloat(deltaTotal);
+		$("[id='"+contaNome+"']").text(parseFloat(saldoTotal).formatMoney(2));
+		$('#somaTotal').text(parseFloat(newTotalValue).formatMoney(2));
+	}
 	if (saldoTotal>=0) {
 		$('#saldoGeral').removeClass('SaldoNeg');
 		$('#saldoGeral').addClass('SaldoPos');

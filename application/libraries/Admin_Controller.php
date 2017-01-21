@@ -20,7 +20,6 @@ class Admin_Controller extends MY_Controller {
         $this->load->library(array('ion_auth'));
 		$this->load->model(array('budget/vw_contas_saldo'));
 		$this->load->model(array('budget/profile'));
-		$this->load->library('session');
 		
 		if (!$this->ion_auth->logged_in()) {
             redirect('/auth', 'refresh');
@@ -31,9 +30,6 @@ class Admin_Controller extends MY_Controller {
 		} else {
 			redirect('/profiles', 'refresh');
 		}
-		
-        
-
 		
         $this->is_admin = $this->ion_auth->is_admin();
         $user = $this->ion_auth->user()->row();

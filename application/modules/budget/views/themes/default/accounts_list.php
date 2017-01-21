@@ -3,6 +3,22 @@
 	var categorias = <?php echo json_encode(array_values($categorias)); ?>;
 	var contaID = <?php echo json_encode($contaID); ?>;	
 	var contaNome = <?php echo json_encode($contaNome); ?>;
+	var lang_btSave = <?=json_encode(lang('accounts_button_save'));?>;
+	var lang_btCancel = <?=json_encode(lang('accounts_button_cancel'));?>;
+	var lang_labelSubtransaction = <?=json_encode(lang('accounts_add_subtransaction'));?>;
+	var lang_error_noaccounts = <?=json_encode(lang('accountsJS_error_noaccounts'));?>;
+	var lang_remaining_value = <?=json_encode(lang('accounts_value_left'));?>;
+	var lang_remaining_error = <?=json_encode(lang('accountsJS_error_remaining_value'));?>;
+	var lang_account_head = <?=json_encode(lang('accounts_heads_account'));?>;
+	var lang_account_date = <?=json_encode(lang('accounts_heads_date'));?>;
+	var lang_account_payee = <?=json_encode(lang('accounts_heads_payee'));?>;
+	var lang_account_inflow = <?=json_encode(lang('accounts_heads_inflow'));?>;
+	var lang_account_outflow = <?=json_encode(lang('accounts_heads_outflow'));?>;
+	var lang_error_account_notfound = <?=json_encode(lang('accountsJS_error_noaccounts_found'));?>;
+	var lang_no_category = <?=json_encode(lang('accounts_no_category'));?>;
+	var lang_transferto= <?=json_encode(lang('accounts_add_transferto'));?>;
+	
+	
 </script>
 
 <!-- Navigation -->
@@ -24,31 +40,31 @@
 		<?php 
 			$saldo_n_conciliado = $saldo - $saldo_conciliado;
 		?>
-		<div class="exibeInformacoes"><span class="Titulo">Saldo conciliado:</span><br/><span id="saldoConciliado" class="<?=($saldo_conciliado>=0 ? "SaldoPos" : "SaldoNeg")?>"><?=($saldo_conciliado>=0 ? "$" : "-$")?><?=number_format(abs($saldo_conciliado), 2, '.', ',')?></span></div>
+		<div class="exibeInformacoes"><span class="Titulo"><?=lang('accounts_value_cleared');?></span><br/><span id="saldoConciliado" class="<?=($saldo_conciliado>=0 ? "SaldoPos" : "SaldoNeg")?>"><?=($saldo_conciliado>=0 ? "$" : "-$")?><?=number_format(abs($saldo_conciliado), 2, '.', ',')?></span></div>
 		<div class="exibeInformacoes"><span class="Divisor">+</span></div>
-		<div class="exibeInformacoes"><span class="Titulo">Saldo a haver:</span><br/><span id="saldoNConciliado" class="<?=($saldo_n_conciliado>=0 ? "SaldoPos" : "SaldoNeg")?>"><?=($saldo_n_conciliado>=0 ? "$" : "-$")?><?=number_format(abs($saldo_n_conciliado), 2, '.', ',')?></span></div>
+		<div class="exibeInformacoes"><span class="Titulo"><?=lang('accounts_value_not_cleared');?></span><br/><span id="saldoNConciliado" class="<?=($saldo_n_conciliado>=0 ? "SaldoPos" : "SaldoNeg")?>"><?=($saldo_n_conciliado>=0 ? "$" : "-$")?><?=number_format(abs($saldo_n_conciliado), 2, '.', ',')?></span></div>
 		<div class="exibeInformacoes"><span class="Divisor">=</span></div>
-		<div class="exibeInformacoes"><span class="Titulo">Saldo total:</span><br/><span id="saldoGeral" class="<?=($saldo>=0 ? "SaldoPos" : "SaldoNeg")?>"><?=($saldo>=0 ? "$" : "-$")?><?=number_format(abs($saldo), 2, '.', ',')?></span></div>
+		<div class="exibeInformacoes"><span class="Titulo"><?=lang('accounts_value_working');?></span><br/><span id="saldoGeral" class="<?=($saldo>=0 ? "SaldoPos" : "SaldoNeg")?>"><?=($saldo>=0 ? "$" : "-$")?><?=number_format(abs($saldo), 2, '.', ',')?></span></div>
 	</ul>
 </nav>
 
 <div id="page-wrapper">
 
 	<div class="alert alert-warning alert-dismissible" role="alert" style="display:none" id="erro">
-	<button type="button" class="close" id="fechaErro" aria-label="Close"><span aria-hidden="true">&times;</span></button>Esta é uma subtransação de transferência e não pode ser editada diretamente.</div>
+	<button type="button" class="close" id="fechaErro" aria-label="Close"><span aria-hidden="true">&times;</span></button><?=lang('accounts_errors_subtransaction');?></div>
 	<div class="tabela">
 		<div class="tabelaLinks">
-			<a id="btAddTransacao" href="#" class=""><i class="fa fa-plus-circle fa-fw"></i>Adicionar transação</a>
+			<a id="btAddTransacao" href="#" class=""><i class="fa fa-plus-circle fa-fw"></i><?=lang('accounts_list_addtransaction');?></a>
 			<div class="dropdown" style="display: inline-block;">
-				<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-pencil-square-o fa-fw"></i><span id="btEditar">Editar</span><span class="caret"></span></a>
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-pencil-square-o fa-fw"></i><span id="btEditar"><?=lang('accounts_list_edittransaction');?></span><span class="caret"></span></a>
 				<ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="font-size:0.8em;">
-					<li><a href="#">Marcar como conciliado</a></li>
-					<li><a href="#">Marcar como não conciliado</a></li>
+					<li><a href="#"><?=lang('accounts_list_edittransaction_markcleared');?></a></li>
+					<li><a href="#"><?=lang('accounts_list_edittransaction_marknotcleared');?></a></li>
 					<li role="separator" class="divider"></li>
-					<li><a href="#" id="btExcluirSel">Excluir selecionadas</a></li>
+					<li><a href="#" id="btExcluirSel"><?=lang('accounts_list_edittransaction_delete');?></a></li>
 				</ul>
 			</div>
-			<a data-toggle="modal" href="#importaTransacoes" id="btImport"><i class="fa fa-upload fa-fw"></i>Importar</a>
+			<a data-toggle="modal" href="#importaTransacoes" id="btImport"><i class="fa fa-upload fa-fw"></i><?=lang('accounts_list_importOFX');?></a>
 		</div>
 	<form id="formTransacoes" method="post">	
 	<table class="table table-hover table-no-bordered table-condensed table-responsive tabela" id="tbTransacoes" 
@@ -62,14 +78,14 @@
 		data-height="100%">
 			<thead>
 				<tr><th id="thckAll"><input type="checkbox" id="ckbAll" data-indice="todas"></th>
-					<th data-sortable="false" class="col-xs-1" data-filed="conta">Conta</th>
-					<th data-sortable="false" class="col-xs-1" data-field="date" data-sort-name="_date_data" data-sorter="monthSorter">Data</th>
-					<th data-sortable="false" class="col-xs-4" data-field="sacado">Sacado</th>
-					<th data-sortable="false" class="col-xs-2" data-field="categoria">Categoria</th>
-					<th data-sortable="false" class="col-xs-1" data-field="memo">Memo</th>
-					<th data-sortable="false" class="col-xs-1 valores" data-field="saida">Saída</th>
-					<th data-sortable="false" class="col-xs-1 valores" data-field="entrada">Entrada</th>
-					<th data-sortable="false" class="col-xs-1 valores" data-field="saldo">Saldo</th>
+					<th data-sortable="false" class="col-xs-1" data-filed="conta"><?=lang('accounts_heads_account');?></th>
+					<th data-sortable="false" class="col-xs-1" data-field="date" data-sort-name="_date_data" data-sorter="monthSorter"><?=lang('accounts_heads_date');?></th>
+					<th data-sortable="false" class="col-xs-4" data-field="sacado"><?=lang('accounts_heads_payee');?></th>
+					<th data-sortable="false" class="col-xs-2" data-field="categoria"><?=lang('accounts_heads_category');?></th>
+					<th data-sortable="false" class="col-xs-1" data-field="memo"><?=lang('accounts_heads_memo');?></th>
+					<th data-sortable="false" class="col-xs-1 valores" data-field="saida"><?=lang('accounts_heads_outflow');?></th>
+					<th data-sortable="false" class="col-xs-1 valores" data-field="entrada"><?=lang('accounts_heads_inflow');?></th>
+					<th data-sortable="false" class="col-xs-1 valores" data-field="saldo"><?=lang('accounts_heads_balance');?></th>
 					<th></th>
 				</tr>
 			</thead>
@@ -91,11 +107,11 @@
 								<td id="col_sacado_nome"><?=$list['sacado_nome']?></td>
 								<td id="col_categoria"><?php
 										if($list['count_filhas']>1) {
-											echo "<i>(Múltiplas categorias/transferência)...</i>";
+											echo "<i>".lang('accounts_multiple_transfer')."</i>";
 										} else if ($list['conta_para_id']!='') {
-											echo "<i>(Múltiplas categorias/transferência)...</i>";
+											echo "<i>".lang('accounts_multiple_transfer')."</i>";
 										} else if (($list['categoria'])=='') {
-											echo "<span class=\"label label-warning\" style=\"font-size: 12px;\">Classifique este item!</span>";
+											echo "<span class=\"label label-warning\" style=\"font-size: 12px;\">".lang('accounts_no_category')."</span>";
 										} else {
 											echo $list['categoria'];
 										} ?></td>
@@ -150,7 +166,7 @@
 					if ($itemSelecionado=="multiplos") {
 						$sHTML .= "selected=\"selected\"";
 					}
-					$sHTML .= ">Múltiplas categorias/transferir</optgroup>";
+					$sHTML .= ">".lang('accounts_multiple_transfer')."</optgroup>";
 				}
 				$sHTML .= "</select>";
 				return $sHTML;
@@ -166,12 +182,13 @@
 							</td><td><input type="text" name="transacaoID" id="transacaoID" value="<?=$tID?>" style="display:none"></td>
 							<td>
 								<button type="button" class="btn btn-info btn-sm" aria-label="Adicionar Subtransação"  id="btAddSub">
-								  <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Subtransação/Transferência
+								  <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> <?=lang('accounts_add_subtransaction');?>
 								</button>
 							</td>							
-							<td style="text-align: right" class="valores">Faltando distribuir:</td><td></td>
+							<td style="text-align: right" class="valores"><?=lang('accounts_value_left');?></td><td></td>
 							<td><span id="faltandoSaida" class="account valores">0</span></td>
 							<td><span id="faltandoEntrada" class="account valores">0</span></td>
+							<td></td>
 							<td></td>
 						</tr>
 						<tr class="editaTransacao">
@@ -180,14 +197,15 @@
 							<td></td>
 							<td>
 								<button type="submit" class="btn btn-success btn-sm" aria-label="Salvar" id="btSalvar">
-								  <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Salvar
+								  <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> <?=lang('accounts_button_save');?>
 								</button>
 							</td>
 							<td>
 								<button type="button" class="btn btn-danger btn-sm" aria-label="Cancelar" id="btCancelar">
-								  <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span> Cancelar
+								  <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span> <?=lang('accounts_button_cancel');?>
 								</button>
 							</td>
+							<td></td>
 							<td></td>
 						</tr>
 						 
@@ -211,6 +229,7 @@
 								<td><input type="text" name="totalSaida" placeholder="Saída" id="totalSaida" value="<?=($list['valor']<0) ? (-1)*$list['valor'] : "0"?>" class="form-control form-inline transacao input-sm valor"/></td>
 								<td><input type="text" name="totalEntrada" placeholder="Entrada" id="totalEntrada" value="<?=($list['valor']>=0) ? $list['valor'] : "0"?>" class="form-control form-inline transacao input-sm valor"/></td>
 								<td><input type="text" name="split" id="split" value="<?=($list['count_filhas']>1 || $list['conta_para_id']!='') ? "true" : "false" ?>" style="display:none"></td>
+								<td></td>
 							</tr>
 						<?php endif; ?>
 						<?php if ($list['count_filhas']>1 || $list['conta_para_id']!=''):?>
@@ -224,6 +243,7 @@
 							<td><input type="text" placeholder="Saída" data-trid="<?=$list['tritem_id']?>"  id="saida_<?=$intTr?>" name="saida_<?=$intTr?>" value="<?=($list['valor_item']<0) ? (-1)*$list['valor_item'] : ''?>" class="form-control form-inline transacao input-sm valor"/></td>
 							<td><input type="text" placeholder="Entrada" data-trid="<?=$list['tritem_id']?>"  id="entrada_<?=$intTr?>" name="entrada_<?=$intTr?>" value="<?=($list['valor_item']>=0) ? $list['valor_item'] : ''?>" class="form-control form-inline transacao input-sm valor"/></td>
 							<td></td>
+							<td></td>
 						</tr>
 						<?php endif;?>
 				<?php $tID = $list['transacao_id']; $contaID = $list['conta_id'];?>
@@ -235,12 +255,13 @@
 							</td><td><input type="text" name="transacaoID" id="transacaoID" value="<?=$tID?>" style="display:none"></td>
 							<td>
 								<button type="button" class="btn btn-info btn-sm" aria-label="Adicionar Transacao"  id="btAddSub">
-								  <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Subtransação/Transferência
+								  <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> <?=lang('accounts_add_subtransaction');?>
 								</button>
 							</td>							
-							<td style="text-align: right" class="valores">Faltando distribuir:</td><td></td>
-							<td><span id="faltandoSaida" class="account valores">0</span></td>
-							<td><span id="faltandoEntrada" class="account valores">0</span></td>
+							<td style="text-align: right" class="valores"><?=lang('accounts_value_left');?></td><td></td>
+							<td><span id="faltandoSaida" class="account valores">0.00</span></td>
+							<td><span id="faltandoEntrada" class="account valores">0.00</span></td>
+							<td></td>
 							<td></td>
 						</tr>
 						<tr class="editaTransacao">
@@ -248,14 +269,15 @@
 							<td></td>
 							<td>
 								<button type="submit" class="btn btn-success btn-sm" aria-label="Salvar" id="btSalvar">
-								  <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Salvar
+								  <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> <?=lang('accounts_button_save');?>
 								</button>
 							</td>
 							<td>
 								<button type="button" class="btn btn-danger btn-sm" aria-label="Cancelar" id="btCancelar">
-								  <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span> Cancelar
+								  <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span> <?=lang('accounts_button_cancel');?>
 								</button>
 							</td>
+							<td></td>
 							<td></td>
 						</tr>
 						 
@@ -274,23 +296,23 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4 class="modal-title">Importar Arquivo OFX</h4>
+						<h4 class="modal-title"><?=lang('accounts_ofx_heading');?></h4>
 					</div>
 					<form action="<?=base_url('importaOFX')?>" method="post" enctype="multipart/form-data">
 						<div id="OFX_Inicio" class="modal-body">
-							<p>Selecione um arquivo OFX compátivel para importar transações:</p>
+							<p><?=lang('accounts_ofx_select');?></p>
 							<div style="display:none">
 								<input type="file" name="files[]" id="filer_input" accept=".ofx">							
 							</div>
 							<button type="button" class="btn btn-info" id="btFile">
-								<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> Escolher arquivo...
+								<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> <?=lang('accounts_ofx_button');?>
 							</button>
 						</div>
 						<div id="OFX_Resultado" class="modal-body">
 						</div>
 						<div class="modal-footer">
-							<button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
-							<button type="submit" type="button" class="btn btn-primary" id="btImportarFinal" disabled>Importar</button>
+							<button type="button" class="btn btn-default" data-dismiss="modal"><?=lang('accounts_button_close');?></button>
+							<button type="submit" type="button" class="btn btn-primary" id="btImportarFinal" disabled><?=lang('accounts_button_import');?></button>
 						</div>
 					</form>
 				</div>
