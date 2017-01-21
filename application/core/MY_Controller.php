@@ -18,7 +18,7 @@ class MY_Controller extends CI_Controller {
 		$this->load->library('session');		
 		
 		if(!$this->session->userdata('lang')) {
-			$this->session->set_userdata('lang',$this->config->item('language'));
+			$this->session->set_tempdata('lang',$this->config->item('language'),10*365*24*60*60);
 		}
 		$idiom = $this->session->userdata('lang');
 		
